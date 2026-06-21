@@ -2,7 +2,7 @@
  * Represents an anonymous Player who hasn't found a match.
  */
 export class AnonymousPlayer {
-
+    
     /**
      * Creates an instance of AnonymousUser.
      * @constructor
@@ -13,6 +13,9 @@ export class AnonymousPlayer {
         this.socket = null ; // to be populated post matchmaking, otherwise this whole thing will be stringifed when we put into redis.
         this.connected = true;
         this.user_id = user_id // socket id, temporary for now so don't trust its
+    }
+    destroy(){
+    
     }
 }
 

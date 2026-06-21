@@ -19,5 +19,9 @@ export const registerSocketHandlers = (io) => {
             await addToAnonMatchmakingQueue(anonymousPlayer);
             logger.info(`Successfully joined the anonymous matchmaking queue with user_id : ${socket.id}`);
         })
+
+        socket.on("disconnect",() => {
+            logger.info(`${socket.id} has disconnected`);
+        })
     })
 }

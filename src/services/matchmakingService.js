@@ -1,6 +1,8 @@
 import { Logger } from "../utils/logger.js";
 import { Redis } from "ioredis";
 import { getStringForRedis,getObjectFromRedisString } from "../utils/redisUtils.js";
+import userService from "./userService.js";
+
 
 const filename = import.meta.url;
 const logger = new Logger(filename);
@@ -70,7 +72,10 @@ const runAnonymousMatchmaking = async() => {
         const playerBisRemoved = results[1][1] ;
         if(playerAisRemoved && playerBisRemoved ){
             logger.info(`Found a match between two Anonymous Players!`);
+            logger.info(`Passing context to and starting activating Room Manager`);
             
+
+
 
         }else{
                 logger.warn(`Collision: one player was already matched, skipping pair`);

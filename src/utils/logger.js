@@ -18,6 +18,10 @@ const fmt = printf(({ level, message, timestamp: ts, filename, stack }) => {
   return `${DIM}[${ts}]${RESET} ${color}[${level.toUpperCase()}]${RESET} ${DIM}[${filename}]${RESET} ${color}${stack || message}${RESET}`;
 });
 
+const serialize = (message) => 
+    typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
+
+
 const winstonLogger = winston.createLogger({
   level: "info",
   format: combine(
@@ -43,15 +47,15 @@ export class Logger {
   }
 
   info(message) {
-    winstonLogger.info(message, { filename: this.filename });
+    winstonLogger.info(serialize(message), { filename: this.filename });
   }
 
   warn(message) {
-    winstonLogger.warn(message, { filename: this.filename });
+    winstonLogger.warn(serialize(message), { filename: this.filename });
   }
 
   error(message, err) {
-    winstonLogger.error(message, {
+    winstonLogger.error(serialize(message), {
       filename: this.filename,
       ...(err instanceof Error && { stack: err.stack }),
     });

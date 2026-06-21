@@ -10,9 +10,9 @@ export class AnonymousPlayer {
      */
 
     constructor(user_id) {
+        this.socket = null ; // to be populated post matchmaking, otherwise this whole thing will be stringifed when we put into redis.
         this.connected = true;
-        this.user_id = user_id // persistent, stored on the client as a secret, then sent to us.
-    
+        this.user_id = user_id // socket id, temporary for now so don't trust its
     }
 }
 

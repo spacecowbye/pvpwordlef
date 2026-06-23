@@ -32,6 +32,8 @@ export const registerSocketHandlers = (io) => {
         })
 
         socket.on("disconnect",() => {
+            // #TODO 
+            // if a queued socket is disconnected then remove it from the matchmaking queuue, remove it from socket mapping
             logger.info(`${socket.id} has disconnected`);
         })
 

@@ -31,7 +31,8 @@ export const getObjectFromRedisString = (redisString) => {
         logger.warn(`Error parsing string into object after retrieving it from redis`);
         throw new Error("Error parsing string into object after retrieving it from redis");
     }
-    logger.info(`Parsed the below object from the returned redis string`);
+    logger.info(`Parsed this object from the returned redis string `);
+    logger.info(object);
     return object;
 
 }

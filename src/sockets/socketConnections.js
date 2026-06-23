@@ -1,7 +1,7 @@
 import { Logger } from "../utils/logger.js"
 import { addToAnonMatchmakingQueue } from "../services/matchmakingService.js";
 import  userService  from "../services/userService.js";
-
+import { matchmakingEvents } from "../services/matchmakingService.js";
 
 const filepath = import.meta.url;
 const logger = new Logger(filepath);
@@ -9,6 +9,14 @@ const logger = new Logger(filepath);
 
 export const registerSocketHandlers = (io) => {
     
+    
+
+    matchmakingEvents.on("match_found",(payload) => {
+                logger.info(`Matchmaking Service has found a match`);
+                logger.info(payload);
+                const { room_id } = payload;
+                io.to(room_id).emit("matchmaking:anon:matched",payload);
+    })
     io.on("connection",(socket) => {
         logger.info(`A new connection recieved from socket ${socket.id} `)
 
@@ -23,5 +31,7 @@ export const registerSocketHandlers = (io) => {
         socket.on("disconnect",() => {
             logger.info(`${socket.id} has disconnected`);
         })
+
+       
     })
 }

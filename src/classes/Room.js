@@ -1,8 +1,9 @@
-
 export class Room{
     
-    constructor(){
-        this.players = [];
-        this.room_id = generate
+    constructor(room_id,playersArray){
+        this.players = playersArray
+        this.room_id = room_id;
+
     }
+
 }

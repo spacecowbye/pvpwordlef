@@ -544,7 +544,10 @@ document.getElementById('play-button').addEventListener('click', () => {
   })
   
   socket.emit("matchmaking:anon:join");
-
+  socket.on("matchmaking:anon:matched",(data) => {
+    console.log(`Match found`);
+    console.log(data);
+  })
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-content').style.display = 'flex';
   gameStarted = true;

@@ -4,7 +4,7 @@ import { config } from "./config/config.js";
 import { createServer } from "node:http"
 import { Server } from "socket.io";
 import { registerSocketHandlers } from "./sockets/socketConnections.js";
-
+import gameRouter from "./routes/game.routes.js";
 
 const filename = import.meta.url
 const logger = new Logger(filename);
@@ -16,8 +16,11 @@ const io = new Server(server);
 const PORT = config.PORT;
 
 
+
+
 app.use(express.static("public"));
 app.use(express.json());
+
 
 
 //socket stuff here

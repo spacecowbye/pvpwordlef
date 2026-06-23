@@ -9,9 +9,12 @@ const logger = new Logger(filepath);
 
 export const registerSocketHandlers = (io) => {
     
-    
+    matchmakingEvents.on("matchmaking:anon:queued",(payload) => {
+        logger.info(`Sending confirmation to client ${payload.user_id} that they have been queued`);
+        logger.info(payload);
+    })
 
-    matchmakingEvents.on("match_found",(payload) => {
+    matchmakingEvents.on("matchmaking:anon:match_found",(payload) => {
                 logger.info(`Matchmaking Service has found a match`);
                 logger.info(payload);
                 const { room_id } = payload;

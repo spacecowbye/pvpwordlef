@@ -20,6 +20,9 @@ export const addToAnonMatchmakingQueue = async (anonymousUser) => {
         const stringifiedAnonymousUser = getStringForRedis(anonymousUser);
         await redis.zadd(ANONYMOUS_MATCHMAKING_QUEUE_KEY,timestamp,stringifiedAnonymousUser);
         logger.info(`[ANONYMOUS Q]Succedded in putting the anonymous user in the matchmaking queue`);
+        matchmakingEvents.emit("matchmaking:anon:queued",JSON.stringify(anonymousUser));
+        
+        
     }catch(err){
         logger.error(err);
         logger.error(`An error occured while trying to add the anonymous user to the redis queue`);
@@ -81,7 +84,7 @@ const runAnonymousMatchmaking = async() => {
                 
                 const room = roomManager.createRoom(playerA,playerB)
                 const payload = roomManager.getRoomPayloadForClient(room);
-                matchmakingEvents.emit("match_found",payload);
+                matchmakingEvents.emit("matchmaking:anon:match_found",payload);
 
             }
             else{

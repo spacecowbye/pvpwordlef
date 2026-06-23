@@ -28,7 +28,6 @@
       font-family: 'Outfit', sans-serif;
     }
 
-    /* ── Shell ── */
     .shell {
       min-height: 100vh;
       min-height: 100dvh;
@@ -38,7 +37,6 @@
       gap: 0;
     }
 
-    /* ── Topbar ── */
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -66,7 +64,6 @@
       text-transform: uppercase;
     }
 
-    /* ── Main ── */
     .main {
       flex: 1;
       display: flex;
@@ -78,15 +75,20 @@
       position: relative;
     }
 
-    /* ── Play Screen Screen ── */
-    #start-screen {
-      display: flex;
+    /* ── All three screens use the same base ── */
+    #start-screen,
+    #queue-screen,
+    #game-content {
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 24px;
       animation: fadeIn 0.4s ease;
     }
+
+    /* Only start-screen is visible on load */
+    #start-screen { display: flex; }
 
     .welcome-title {
       font-size: 24px;
@@ -95,10 +97,7 @@
       margin: 0;
       text-align: center;
     }
-
-    .welcome-title span {
-      color: var(--green);
-    }
+    .welcome-title span { color: var(--green); }
 
     .play-btn {
       background: var(--green);
@@ -115,31 +114,36 @@
       box-shadow: 0 4px 14px rgba(83, 141, 78, 0.3);
       transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
     }
-
     .play-btn:hover {
       background: #629e5c;
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(83, 141, 78, 0.4);
     }
+    .play-btn:active { transform: translateY(0); }
 
-    .play-btn:active {
-      transform: translateY(0);
+    /* ── Queue spinner ── */
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Game Content Container ── */
-    #game-content {
-      display: none; /* Controlled by JS */
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      width: 100%;
-      animation: fadeIn 0.4s ease;
+    .queue-subtitle {
+      color: var(--muted);
+      font-family: monospace;
+      font-size: 13px;
+      text-transform: uppercase;
+      margin: 0;
+      letter-spacing: 0.06em;
     }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── Status ── */
@@ -154,135 +158,79 @@
       margin: 0;
     }
 
-    /* ══════════════════════════════════════
-       BOARD
-    ══════════════════════════════════════ */
+    /* ── Board ── */
     #game-board {
       display: grid;
       grid-template-rows: repeat(6, 1fr);
       gap: 5px;
       width: 310px;
     }
-
     .board-row {
       display: grid;
       grid-template-columns: repeat(5, 58px);
       gap: 5px;
     }
-
-    .tile {
-      width: 58px;
-      height: 58px;
-      position: relative;
-    }
-
+    .tile { width: 58px; height: 58px; position: relative; }
     .tile-inner {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.44s ease;
     }
-    .tile.flipping .tile-inner {
-      transform: rotateX(90deg);
-    }
-
-    .tile-face,
-    .tile-back {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .tile.flipping .tile-inner { transform: rotateX(90deg); }
+    .tile-face, .tile-back {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-      text-transform: uppercase;
+      font-size: 2rem; font-weight: 700; text-transform: uppercase;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: 4px;
     }
-
-    .tile-face {
-      border: 2px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-    }
-    .tile.has-letter .tile-face {
-      border-color: #565758;
-    }
-
-    .tile-back {
-      transform: rotateX(180deg);
-      border: 2px solid transparent;
-    }
-
-    .tile.correct   .tile-back { background: var(--green);  border-color: var(--green);  color: #fff; }
-    .tile.present   .tile-back { background: var(--yellow); border-color: var(--yellow); color: #fff; }
-    .tile.absent    .tile-back { background: var(--gray);   border-color: var(--gray);   color: #fff; }
-
+    .tile-face { border: 2px solid var(--border); background: var(--bg); color: var(--text); }
+    .tile.has-letter .tile-face { border-color: #565758; }
+    .tile-back { transform: rotateX(180deg); border: 2px solid transparent; }
+    .tile.correct .tile-back { background: var(--green);  border-color: var(--green);  color: #fff; }
+    .tile.present .tile-back { background: var(--yellow); border-color: var(--yellow); color: #fff; }
+    .tile.absent  .tile-back { background: var(--gray);   border-color: var(--gray);   color: #fff; }
     .tile.revealed .tile-inner { transform: rotateX(180deg); }
 
     @keyframes shake {
       0%,100% { transform: translateX(0); }
-      20%      { transform: translateX(-6px); }
-      40%      { transform: translateX(6px); }
-      60%      { transform: translateX(-4px); }
-      80%      { transform: translateX(4px); }
+      20%     { transform: translateX(-6px); }
+      40%     { transform: translateX(6px); }
+      60%     { transform: translateX(-4px); }
+      80%     { transform: translateX(4px); }
     }
     .tile.shake { animation: shake 0.4s ease; }
 
-    /* ══════════════════════════════════════
-       KEYBOARD
-    ══════════════════════════════════════ */
+    /* ── Keyboard ── */
     #keyboard {
-      width: 100%;
-      max-width: 500px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      width: 100%; max-width: 500px;
+      display: flex; flex-direction: column; gap: 8px;
     }
-
-    .key-row {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-    }
-
+    .key-row { display: flex; justify-content: center; gap: 6px; }
     .key {
-      height: 58px;
-      min-width: 43px;
-      padding: 0 6px;
-      border: 1px solid #222;
-      background: #1a1a1a;
-      color: var(--text);
+      height: 58px; min-width: 43px; padding: 0 6px;
+      border: 1px solid #222; background: #1a1a1a; color: var(--text);
       border-radius: 10px;
       font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      cursor: pointer;
-      user-select: none;
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      cursor: pointer; user-select: none;
       transition: background 0.15s, border-color 0.15s;
     }
     .key.wide { min-width: 65px; font-size: 12px; }
-
     .key:active { filter: brightness(0.85); }
-
     .key.correct { background: var(--green);  border-color: var(--green);  color: #fff; }
     .key.present { background: var(--yellow); border-color: var(--yellow); color: #fff; }
     .key.absent  { background: #4a4a4d;       border-color: #4a4a4d;       color: #fff; }
 
-    /* ── Footer ── */
     .footer {
       margin-top: 8px;
       color: var(--muted);
-      font-size: 11px;
-      font-family: monospace;
-      text-align: center;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      min-height: 18px;
+      font-size: 11px; font-family: monospace;
+      text-align: center; letter-spacing: 0.06em;
+      text-transform: uppercase; min-height: 18px;
     }
 
     @media (max-width: 480px) {
@@ -301,82 +249,83 @@
 <body>
 <div class="shell">
 
-  <!-- ── Topbar ── -->
   <header class="topbar" role="banner">
     <div class="brand">pvp<span>wordle</span></div>
     <div class="meta" id="session-meta" aria-live="polite">LOCAL DEV</div>
   </header>
 
-  <!-- ── Main ── -->
   <main class="main">
 
-    <!-- ── Play Screen Overlay ── -->
+    <!-- Play screen -->
     <div id="start-screen">
       <h1 class="welcome-title">Ready for your <span>Duel</span>?</h1>
       <button class="play-btn" id="play-button" type="button">Play</button>
     </div>
 
-    <!-- ── Hidden Game Elements ── -->
+    <!-- Queue screen -->
+    <div id="queue-screen" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <h1 class="welcome-title">Finding an opponent<span>...</span></h1>
+      <p class="queue-subtitle">Searching for a worthy duel</p>
+    </div>
+
+    <!-- Game content (shown after match on this page, or replace with redirect) -->
     <div id="game-content">
-      <!-- Status line -->
-      <p id="status" role="status" aria-live="polite" aria-atomic="true">
-        Guess the word.
-      </p>
+      <p id="status" role="status" aria-live="polite" aria-atomic="true">Guess the word.</p>
 
       <section aria-label="Wordle board">
         <div id="game-board" role="grid" aria-label="Guess board, 6 rows of 5 letters" aria-readonly="true">
           <!-- Row 1 -->
           <div class="board-row" role="row" id="row-1" aria-label="Attempt 1">
-            <div class="tile" role="gridcell" id="tile-1-1" aria-label="Row 1, Column 1" data-row="1" data-col="1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-2" aria-label="Row 1, Column 2" data-row="1" data-col="2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-3" aria-label="Row 1, Column 3" data-row="1" data-col="3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-4" aria-label="Row 1, Column 4" data-row="1" data-col="4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-5" aria-label="Row 1, Column 5" data-row="1" data-col="5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-1-1" data-row="1" data-col="1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-1-2" data-row="1" data-col="2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-1-3" data-row="1" data-col="3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-1-4" data-row="1" data-col="4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-1-5" data-row="1" data-col="5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
           </div>
           <!-- Row 2 -->
           <div class="board-row" role="row" id="row-2" aria-label="Attempt 2">
-            <div class="tile" role="gridcell" id="tile-2-1" aria-label="Row 2, Column 1" data-row="2" data-col="1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-2" aria-label="Row 2, Column 2" data-row="2" data-col="2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-3" aria-label="Row 2, Column 3" data-row="2" data-col="3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-4" aria-label="Row 2, Column 4" data-row="2" data-col="4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-5" aria-label="Row 2, Column 5" data-row="2" data-col="5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-2-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-2-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-2-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-2-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-2-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
           </div>
           <!-- Row 3 -->
           <div class="board-row" role="row" id="row-3" aria-label="Attempt 3">
-            <div class="tile" role="gridcell" id="tile-3-1" aria-label="Row 3, Column 1" data-row="3" data-col="1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-2" aria-label="Row 3, Column 2" data-row="3" data-col="2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-3" aria-label="Row 3, Column 3" data-row="3" data-col="3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-4" aria-label="Row 3, Column 4" data-row="3" data-col="4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-5" aria-label="Row 3, Column 5" data-row="3" data-col="5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-3-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-3-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-3-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-3-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-3-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
           </div>
           <!-- Row 4 -->
           <div class="board-row" role="row" id="row-4" aria-label="Attempt 4">
-            <div class="tile" role="gridcell" id="tile-4-1" aria-label="Row 4, Column 1" data-row="4" data-col="1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-2" aria-label="Row 4, Column 2" data-row="4" data-col="2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-3" aria-label="Row 4, Column 3" data-row="4" data-col="3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-4" aria-label="Row 4, Column 4" data-row="4" data-col="4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-5" aria-label="Row 4, Column 5" data-row="4" data-col="5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-4-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-4-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-4-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-4-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-4-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
           </div>
           <!-- Row 5 -->
           <div class="board-row" role="row" id="row-5" aria-label="Attempt 5">
-            <div class="tile" role="gridcell" id="tile-5-1" aria-label="Row 5, Column 1" data-row="5" data-col="1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-2" aria-label="Row 5, Column 2" data-row="5" data-col="2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-3" aria-label="Row 5, Column 3" data-row="5" data-col="3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-4" aria-label="Row 5, Column 4" data-row="5" data-col="4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-5" aria-label="Row 5, Column 5" data-row="5" data-col="5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-5-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-5-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-5-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-5-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-5-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
           </div>
           <!-- Row 6 -->
           <div class="board-row" role="row" id="row-6" aria-label="Attempt 6">
-            <div class="tile" role="gridcell" id="tile-6-1" aria-label="Row 6, Column 1" data-row="6" data-col="1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-2" aria-label="Row 6, Column 2" data-row="6" data-col="2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-3" aria-label="Row 6, Column 3" data-row="6" data-col="3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-4" aria-label="Row 6, Column 4" data-row="6" data-col="4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-5" aria-label="Row 6, Column 5" data-row="6" data-col="5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-6-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-6-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-6-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-6-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            <div class="tile" role="gridcell" id="tile-6-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
           </div>
         </div>
       </section>
 
-      <!-- Keyboard -->
       <div id="keyboard" role="group" aria-label="Virtual keyboard">
         <div class="key-row">
           <button class="key" data-key="Q" type="button" aria-label="Q">Q</button>
@@ -426,144 +375,148 @@ const WORDS = [
   'brine','broom','brown','brunt','budge','build','bumpy','buoys',
   'cabin','cache','camel','cargo','carve','catch','cause','cedar',
   'cello','champ','chest','chimp','chomp','chord','churn','civic',
-  'clamp','clanK','clash','clave','clean','clerk','climb','cling',
-  'cloak','clone','close','cloth','cloud','clout','clung','coach',
-  'comet','comma','coral','couch','could','count','court','cover',
-  'craft','cramp','crash','crawl','creak','cream','creek','creep',
-  'crest','crimp','crisp','cross','crowd','crown','cruel','crumb',
-  'crush','crust','curio','curse','curve','cutie','cycle','daily',
-  'dance','dandy','darks','davit','debut','decay','depot','depot',
-  'derby','depth','digit','dingo','dirge','disco','ditch','diver',
-  'dizzy','dodgy','doing','doubt','dough','dowdy','downs','draft',
-  'drape','drawl','drawn','dread','dream','dress','drink','drool',
-  'droop','drove','drown','druid','drunk','dryer','dulls','dunce',
-  'dusty','early','earth','eclipse','eight','ember','empty','enjoy',
-  'epoch','erupt','ether','event','every','exact','exert','expel',
-  'extra','fable','fairy','false','fancy','fatal','fault','feast',
-  'fiber','field','fiend','fiery','fight','flail','flank','flare',
-  'flask','flair','flash','flock','floor','flora','flour','flown',
-  'fluff','fluid','flunk','flute','flyer','focus','force','forge',
-  'forth','found','frank','fraud','freak','fresh','front','froze',
-  'fruit','funny','fused','fuzzy','gamma','gavel','giant','girth',
-  'given','gland','glare','glean','glide','gloom','glory','gloss',
-  'glove','glyph','going','grace','grade','grand','grant','grape',
-  'grasp','grass','grate','graze','greet','grief','gripe','groan',
-  'groin','group','grout','grove','growl','grown','gruel','gruff',
-  'guild','guile','gulch','gusto','gypsy','habit','hairy','handy',
-  'harsh','hasty','hatch','haven','heart','heavy','heist','helps',
-  'hence','herbs','heron','hinge','hippo','hitch','homer','honey',
-  'honor','horde','horns','hound','hover','howdy','humid','hunch',
-  'hyena','idiom','igloo','image','infer','ingot','inlay','inner',
-  'inter','intro','inure','issue','ivory','jaunt','jelly','jewel',
-  'joust','judge','juice','juicy','jumbo','juror','kayak','kebab',
-  'knack','kneel','knife','knoll','known','kudos','label','lance',
-  'large','laser','latch','later','lathe','layer','leapt','learn',
-  'lease','least','legal','lemon','level','lever','light','lilac',
-  'liner','lodge','lofty','logic','login','loose','lover','lower',
+  'clamp','clash','clean','clerk','climb','cling','cloak','clone',
+  'close','cloth','cloud','clout','clung','coach','comet','comma',
+  'coral','couch','could','count','court','cover','craft','cramp',
+  'crash','crawl','creak','cream','creek','creep','crest','crimp',
+  'crisp','cross','crowd','crown','cruel','crumb','crush','crust',
+  'curio','curse','curve','cycle','daily','dance','dandy','debut',
+  'decay','derby','depth','digit','dingo','dirge','disco','ditch',
+  'diver','dizzy','dodgy','doubt','dough','draft','drape','drawl',
+  'drawn','dread','dream','dress','drink','drool','droop','drove',
+  'drown','drunk','dryer','dunce','dusty','early','earth','eight',
+  'ember','empty','enjoy','epoch','erupt','ether','event','every',
+  'exact','exert','expel','extra','fable','fairy','false','fancy',
+  'fatal','fault','feast','fiber','field','fiend','fiery','fight',
+  'flail','flank','flare','flask','flash','flock','floor','flora',
+  'flour','flown','fluff','fluid','flunk','flute','flyer','focus',
+  'force','forge','forth','found','frank','fraud','freak','fresh',
+  'front','froze','fruit','funny','fused','fuzzy','gamma','giant',
+  'girth','given','gland','glare','glean','glide','gloom','glory',
+  'gloss','glove','grace','grade','grand','grant','grape','grasp',
+  'grass','grate','graze','greet','grief','gripe','groan','groin',
+  'group','grout','grove','growl','grown','gruel','gruff','guild',
+  'guile','gulch','gusto','gypsy','habit','hairy','handy','harsh',
+  'hasty','hatch','haven','heart','heavy','heist','hence','herbs',
+  'heron','hinge','hippo','hitch','honey','honor','horde','hound',
+  'hover','humid','hunch','hyena','idiom','image','infer','ingot',
+  'inlay','inner','inter','intro','issue','ivory','jaunt','jelly',
+  'jewel','joust','judge','juice','juicy','jumbo','juror','kayak',
+  'kebab','knack','kneel','knife','knoll','known','kudos','label',
+  'lance','large','laser','latch','later','lathe','layer','leapt',
+  'learn','lease','least','legal','lemon','level','lever','light',
+  'lilac','liner','lodge','lofty','logic','loose','lover','lower',
   'lucid','lumpy','lunar','lyric','magic','major','maker','manor',
-  'maple','march','marsh','match','maxim','mayor','mealy','meant',
-  'media','melod','mercy','merit','metal','might','mirth','model',
-  'moody','moral','morph','mortar','motif','mound','mount','mourn',
-  'moved','movie','mucky','muted','nadir','naive','nasty','naval',
-  'nerve','newsy','night','noble','noire','noisy','nomad','nymph',
-  'occur','offal','omega','onset','optic','orbit','order','other',
-  'ought','outdo','outer','ovoid','oxide','ozone','paint','panel',
-  'paper','parka','parse','party','paste','patch','pause','peach',
-  'pearl','pedal','penal','perch','peril','perky','petty','phase',
-  'phony','piano','pilot','pinch','pirate','pique','pixel','pizza',
-  'place','plaid','plain','plan','plane','plank','plant','plaza',
-  'plead','pleat','plumb','plume','plump','plunk','plush','pluto',
-  'poach','polar','pouch','power','press','price','prick','pride',
-  'prime','prism','privy','probe','prone','proof','prose','proud',
-  'prune','psalm','pubic','pulpy','punch','purge','queen','query',
-  'quest','queue','quill','quirk','quota','quote','racer','radar',
-  'radix','rainy','rally','ramen','ranch','range','rapid','raven',
-  'reach','realm','rebus','rebut','recut','reign','relax','remix',
+  'maple','march','marsh','match','maxim','mayor','meant','media',
+  'mercy','merit','metal','might','mirth','model','moody','moral',
+  'morph','motif','mound','mount','mourn','moved','movie','mucky',
+  'muted','nadir','naive','nasty','naval','nerve','night','noble',
+  'noisy','nomad','nymph','occur','omega','onset','optic','orbit',
+  'order','other','ought','outdo','outer','oxide','ozone','paint',
+  'panel','paper','parse','party','paste','patch','pause','peach',
+  'pearl','pedal','perch','peril','perky','petty','phase','phony',
+  'piano','pilot','pinch','pique','pixel','pizza','place','plaid',
+  'plain','plane','plank','plant','plaza','plead','pleat','plumb',
+  'plume','plump','plunk','plush','poach','polar','pouch','power',
+  'press','price','prick','pride','prime','prism','privy','probe',
+  'prone','proof','prose','proud','prune','psalm','pulpy','punch',
+  'purge','queen','query','quest','queue','quill','quirk','quota',
+  'quote','racer','radar','rainy','rally','ramen','ranch','range',
+  'rapid','raven','reach','realm','rebut','reign','relax','remix',
   'repay','resin','retch','retro','retry','revel','rigid','risky',
   'rivet','roast','robin','rocky','rogue','rough','round','route',
   'rover','rowdy','royal','rugby','ruler','rusty','sadly','sandy',
-  'savoy','scale','scalp','scamp','scant','scar','scour','scout',
-  'scrub','seize','serve','seven','shade','shaft','shaky','shale',
-  'shame','shape','shard','shark','sharp','shawl','sheen','sheep',
-  'sheet','shelf','shell','shift','shine','shire','shirk','shoal',
-  'shock','shore','shout','shove','shown','shrug','shrunk','siege',
-  'siren','sixth','sixty','sized','skill','skimp','skull','slant',
-  'sleep','sleet','slice','slick','slide','slime','slimy','slope',
-  'sloth','slouch','slump','slunk','slurp','slush','small','smash',
-  'smell','smelt','smirk','smoky','snail','snake','snare','snarl',
-  'sneak','snore','snort','snout','snowy','soapy','solar','solve',
-  'sorry','south','space','spare','spark','spawn','speak','spear',
-  'speed','spell','spelt','spend','spice','spill','spine','spite',
-  'splat','split','spook','spool','spore','sport','spout','spray',
-  'spree','sprig','spunk','squad','squat','squid','stack','staff',
-  'stage','stain','stair','stale','stall','stamp','stand','stark',
-  'start','stash','state','staun','stave','steak','steal','steel',
+  'scale','scalp','scant','scout','scrub','seize','serve','seven',
+  'shade','shaft','shaky','shale','shame','shape','shard','shark',
+  'sharp','sheen','sheep','sheet','shelf','shell','shift','shine',
+  'shire','shirk','shock','shore','shout','shove','shown','shrug',
+  'siege','siren','sixth','sixty','skill','skimp','skull','slant',
+  'sleep','sleet','slice','slick','slide','slime','slope','sloth',
+  'slump','slurp','slush','small','smash','smell','smelt','smirk',
+  'smoky','snail','snake','snare','snarl','sneak','snore','snort',
+  'snout','snowy','solar','solve','sorry','south','space','spare',
+  'spark','spawn','speak','spear','speed','spell','spend','spice',
+  'spill','spine','spite','split','spook','spool','spore','sport',
+  'spout','spray','spree','spunk','squad','squat','squid','stack',
+  'staff','stage','stain','stair','stale','stall','stamp','stand',
+  'stark','start','stash','state','stave','steak','steal','steel',
   'steep','steer','stern','stiff','still','sting','stock','stomp',
-  'stone','stomp','store','stork','storm','story','stout','stove',
-  'strap','straw','stray','strip','strut','stuck','study','stuff',
-  'stump','stung','stunk','stunt','style','suave','sugar','suite',
-  'sunny','super','surge','swamp','swarm','swear','sweep','sweet',
-  'swept','swift','swill','swirl','swoop','sword','synth','tabby',
-  'table','tacky','taffy','taint','taken','tamer','tangy','tapir',
-  'taunt','tawny','teach','tease','tense','tepid','terms','terse',
-  'thank','their','there','these','thick','thin','thing','think',
-  'third','thorn','three','threw','throw','thump','tidal','tiger',
-  'tilde','tinge','tipsy','tired','titan','today','token','tonal',
-  'tonic','topaz','torch','total','touch','tough','toxin','tramp',
-  'traps','trash','trawl','treat','trend','tried','trite','trout',
-  'trove','truce','truck','trump','trunk','trust','truth','tunic',
-  'turbo','tweed','twice','twill','twine','tying','ultra','umber',
-  'umbra','unify','union','unite','until','upper','upset','urban',
-  'usher','utter','uvula','valid','valor','value','vapor','vault',
-  'vaunt','vaunt','venom','verge','verse','video','vigil','villa',
-  'vinyl','viper','viral','visor','vista','vital','vivid','vocal',
-  'voice','vouch','vowel','vulva','wacky','waltz','wares','waxen',
-  'weave','weedy','weigh','weird','whack','whale','wheat','wheel',
-  'where','which','while','whine','whirl','whisk','white','whole',
-  'whose','widen','windy','witty','world','wormy','worth','wrath',
-  'wreck','wring','wrote','yacht','yearn','yield','youth','zesty',
-  'zloty','zombie','zonal','zoned','zoomy',
+  'stone','store','stork','storm','story','stout','stove','strap',
+  'straw','stray','strip','strut','stuck','study','stuff','stump',
+  'stung','stunk','stunt','style','suave','sugar','suite','sunny',
+  'super','surge','swamp','swarm','swear','sweep','sweet','swept',
+  'swift','swirl','swoop','sword','synth','tabby','table','tacky',
+  'taint','taken','tangy','taunt','tawny','teach','tease','tense',
+  'tepid','terse','thank','their','there','these','thick','thing',
+  'think','third','thorn','three','threw','throw','thump','tidal',
+  'tiger','tilde','tinge','tipsy','tired','titan','today','token',
+  'tonal','tonic','topaz','torch','total','touch','tough','toxin',
+  'tramp','traps','trash','trawl','treat','trend','tried','trite',
+  'trout','trove','truce','truck','trunk','trust','truth','tunic',
+  'turbo','tweed','twice','twill','twine','ultra','umber','umbra',
+  'unify','union','unite','until','upper','upset','urban','usher',
+  'utter','valid','valor','value','vapor','vault','venom','verge',
+  'verse','video','vigil','villa','vinyl','viper','viral','visor',
+  'vista','vital','vivid','vocal','voice','vouch','vowel','wacky',
+  'waltz','wares','weave','weedy','weigh','weird','whack','whale',
+  'wheat','wheel','where','which','while','whine','whirl','whisk',
+  'white','whole','whose','widen','windy','witty','world','worth',
+  'wrath','wreck','wring','wrote','yacht','yearn','yield','youth',
+  'zesty',
 ];
 
 const ANSWER = WORDS[Math.floor(Math.random() * WORDS.length)].toLowerCase();
 
-let currentRow  = 0;
+let currentRow   = 0;
 let currentGuess = '';
-let gameOver    = false;
-let gameStarted = false; // New state lock
+let gameOver     = false;
+let gameStarted  = false;
 
 const keyState = new Map();
 
-// Handle Play Screen visibility toggle
-document.getElementById('play-button').addEventListener('click', () => {
-  //SOCKET STUFF HERE CLIENT SIDE STARTS
-  const socket =  io();
+// ── Screen helper ──────────────────────────────────────────────
+function showScreen(id) {
+  ['start-screen', 'queue-screen', 'game-content'].forEach(screenId => {
+    document.getElementById(screenId).style.display = 'none';
+  });
+  document.getElementById(id).style.display = 'flex';
+}
 
-  socket.on("connect",()=> {
-    console.log("Connected to server with client id",socket.id);
-  })
-  
-  socket.emit("matchmaking:anon:join");
-  socket.on("matchmaking:anon:matched",(data) => {
-    console.log(`Match found`);
-    console.log(data);
-  })
-  document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('game-content').style.display = 'flex';
-  gameStarted = true;
+// ── Matchmaking ────────────────────────────────────────────────
+document.getElementById('play-button').addEventListener('click', () => {
+  showScreen('queue-screen');
+
+  const socket = io();
+
+  socket.on('connect', () => {
+    console.log('Connected:', socket.id);
+    socket.emit('matchmaking:anon:join');
+  });
+
+  socket.on('connect_error', (err) => {
+    console.error('Socket connection failed:', err.message);
+    showScreen('start-screen');
+  });
+
+  // Server confirmed we're in the queue — already showing queue-screen, nothing to do
+  socket.on('matchmaking:anon:queued', () => {
+    console.log('In queue...');
+  });
+
+  // Match found — redirect to the room page
+  socket.on('matchmaking:anon:matched', (data) => {
+    console.log('Match found:', data);
+    const matchId = data.matchId || data.roomId || '';
+    window.location.href = `/room/${matchId}`;
+  });
 });
 
+// ── Board helpers ──────────────────────────────────────────────
 function getTile(row, col) {
   return document.getElementById(`tile-${row + 1}-${col + 1}`);
 }
-
-function setStatus(msg) {
-  document.getElementById('status').textContent = msg;
-}
-
-function setFooter(msg) {
-  document.getElementById('footer').textContent = msg;
-}
+function setStatus(msg) { document.getElementById('status').textContent = msg; }
+function setFooter(msg) { document.getElementById('footer').textContent = msg; }
 
 function paintCurrentRow() {
   for (let c = 0; c < 5; c++) {
@@ -600,20 +553,13 @@ function shakeCurrentRow() {
 function evaluate(guess, answer) {
   const result = Array(5).fill('absent');
   const answerLeft = answer.split('');
-
   for (let i = 0; i < 5; i++) {
-    if (guess[i] === answer[i]) {
-      result[i] = 'correct';
-      answerLeft[i] = null;
-    }
+    if (guess[i] === answer[i]) { result[i] = 'correct'; answerLeft[i] = null; }
   }
   for (let i = 0; i < 5; i++) {
     if (result[i] === 'correct') continue;
     const idx = answerLeft.indexOf(guess[i]);
-    if (idx !== -1) {
-      result[i] = 'present';
-      answerLeft[idx] = null;
-    }
+    if (idx !== -1) { result[i] = 'present'; answerLeft[idx] = null; }
   }
   return result;
 }
@@ -625,16 +571,15 @@ async function revealRow(row, guess, evaluation) {
       const tile = getTile(row, c);
       const back = tile.querySelector('.tile-back');
       const tone = evaluation[c];
-
       setTimeout(() => {
         tile.classList.add('flipping');
         back.textContent = guess[c].toUpperCase();
-
         setTimeout(() => {
           tile.classList.remove('flipping');
           tile.classList.add('revealed', tone);
-          const toneLabel = tone === 'correct' ? 'correct position' : tone === 'present' ? 'wrong position' : 'not in word';
-          tile.setAttribute('aria-label', `${guess[c].toUpperCase()}: ${toneLabel}`);
+          const label = tone === 'correct' ? 'correct position'
+                      : tone === 'present' ? 'wrong position' : 'not in word';
+          tile.setAttribute('aria-label', `${guess[c].toUpperCase()}: ${label}`);
           done++;
           if (done === 5) resolve();
         }, 220);
@@ -649,9 +594,7 @@ function updateKeyboard(guess, evaluation) {
     const letter = guess[i].toUpperCase();
     const tone   = evaluation[i];
     const prev   = keyState.get(letter);
-    if (!prev || priority[tone] > priority[prev]) {
-      keyState.set(letter, tone);
-    }
+    if (!prev || priority[tone] > priority[prev]) keyState.set(letter, tone);
   }
   keyState.forEach((tone, letter) => {
     const btn = document.querySelector(`[data-key="${letter}"]`);
@@ -663,16 +606,8 @@ function updateKeyboard(guess, evaluation) {
 
 async function submitGuess() {
   if (gameOver) return;
-  if (currentGuess.length !== 5) {
-    setStatus('Not enough letters.');
-    shakeCurrentRow();
-    return;
-  }
-  if (!WORDS.includes(currentGuess)) {
-    setStatus('Not in word list.');
-    shakeCurrentRow();
-    return;
-  }
+  if (currentGuess.length !== 5) { setStatus('Not enough letters.'); shakeCurrentRow(); return; }
+  if (!WORDS.includes(currentGuess)) { setStatus('Not in word list.'); shakeCurrentRow(); return; }
 
   const evaluation = evaluate(currentGuess, ANSWER);
   const guess = currentGuess;
@@ -683,13 +618,12 @@ async function submitGuess() {
   updateKeyboard(guess, evaluation);
 
   if (evaluation.every(e => e === 'correct')) {
-    setStatus(['Brilliant!', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew!'][currentRow]);
+    setStatus(['Brilliant!','Magnificent!','Impressive!','Splendid!','Great!','Phew!'][currentRow]);
     setFooter(`The word was ${ANSWER.toUpperCase()}.`);
     return;
   }
 
   currentRow++;
-
   if (currentRow >= 6) {
     setStatus(`Game over. The word was ${ANSWER.toUpperCase()}.`);
     setFooter('Better luck next time.');
@@ -701,7 +635,7 @@ async function submitGuess() {
 }
 
 function handleKey(key) {
-  if (gameOver || !gameStarted) return; // Verify game has initialized
+  if (gameOver || !gameStarted) return;
   const k = key.toUpperCase();
   if (k === 'ENTER')     { submitGuess(); return; }
   if (k === 'BACKSPACE') { deleteLetter(); return; }
@@ -714,7 +648,7 @@ document.getElementById('keyboard').addEventListener('click', e => {
 });
 
 document.addEventListener('keydown', e => {
-  if (!gameStarted) return; 
+  if (!gameStarted) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   const key = e.key === 'Backspace' ? 'BACKSPACE'
             : e.key === 'Enter'     ? 'ENTER'
@@ -726,6 +660,7 @@ document.addEventListener('keydown', e => {
     handleKey(key);
   }
 });
+
 console.log(ANSWER);
 </script>
 </body>

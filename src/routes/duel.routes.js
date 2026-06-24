@@ -4,7 +4,7 @@ import { ok } from "node:assert";
 const router = express.Router();
 
 
-router.get(`/game/:room`,(req,res) => {
+router.get(`/duel/:room`,(req,res) => {
     res.status(200).json({
         "status" : "ok",
     })

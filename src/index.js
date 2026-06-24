@@ -5,7 +5,7 @@ import { createServer } from "node:http"
 import { Server } from "socket.io";
 import { registerSocketHandlers } from "./sockets/socketConnections.js";
 import gameRouter from "./routes/duel.routes.js";
-
+import { clearAnonMatchmakingQueue } from "./services/matchmakingService.js";
 
 
 const filename = import.meta.url
@@ -17,18 +17,13 @@ const io = new Server(server);
 
 const PORT = config.PORT;
 
-
-
-app.get("/duel/:room_id",(req,res) => {
-  res.status(200).json({
-    data : "ok"
-  })
-})
-
-
+app.use(gameRouter);
 app.use(express.static("public"));
 app.use(express.json());
 
+
+// clear Queue on server restart
+await clearAnonMatchmakingQueue()
 
 
 //socket stuff here

@@ -104,6 +104,13 @@ const runAnonymousMatchmaking = async() => {
 
 }
 
+export const clearAnonMatchmakingQueue = async() => {
+        logger.info(`Removing Anonymous members on server start`);
+        const removed = await redis.del(ANONYMOUS_MATCHMAKING_QUEUE_KEY);
+        logger.info(`Anonymous Matchmaking queue cleared (${removed ? "queue existed" : "queue already empty"})`);
+}
+
+
 setInterval(async() => {
    await runAnonymousMatchmaking();
 },2100);

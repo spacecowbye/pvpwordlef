@@ -39,10 +39,7 @@ const runAnonymousMatchmaking = async() => {
     )
     if(anonymousQueueMembers.length < 4){
         return;
-    }
-    console.log(anonymousQueueMembers);
-
-    
+    }  
     // now we have an array like [object1, score1, object2 , score2 ] so putting that its proper form
     let anonymousQueue = []
     for(let i = 0; i < anonymousQueueMembers.length ; i+=2){
@@ -96,12 +93,7 @@ const runAnonymousMatchmaking = async() => {
         }else{
                 logger.warn(`Collision: one player was already matched, skipping pair`);
         }
-        
     }
-    
-    
-
-
 }
 
 export const clearAnonMatchmakingQueue = async() => {

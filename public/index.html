@@ -492,13 +492,15 @@ document.getElementById('play-button').addEventListener('click', () => {
 
   // Server confirmed we're in the queue
   socket.on('matchmaking:anon:queued', () => {
-    showScreen('queue-screen');
+    localStorage.setItem('user_id', player.user_id);
+
   });
 
   // Match found — redirect to the room page
   socket.on('matchmaking:anon:matched', (payload) => {
     console.log(payload);
     const { room_id } = payload;
+    localStorage.setItem('room_id', data.room_id);
     window.location.href = `/duel/${room_id}`;
   });
 });

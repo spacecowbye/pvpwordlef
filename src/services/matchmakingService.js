@@ -12,15 +12,15 @@ const ANONYMOUS_MATCHMAKING_QUEUE_KEY = "fANONYMOUS_MATCHMAKING_QUEUE";
 const MATCHMAKING_WINDOW_SIZE = 100;
 export const matchmakingEvents = new EventEmitter();
 
-export const addToAnonMatchmakingQueue = async (anonymousUser) => {
+export const addToAnonMatchmakingQueue = async (anonymousPlayer) => {
     logger.info(`[ANONYMOUS Q] Attempting to add above User to the matchmaking Queue`);
 
     try{
         const timestamp = Date.now();
-        const stringifiedAnonymousUser = getStringForRedis(anonymousUser);
-        await redis.zadd(ANONYMOUS_MATCHMAKING_QUEUE_KEY,timestamp,stringifiedAnonymousUser);
+        const stringifiedAnonymousPlayer = getStringForRedis(anonymousPlayer);
+        await redis.zadd(ANONYMOUS_MATCHMAKING_QUEUE_KEY,timestamp,stringifiedAnonymousPlayer);
         logger.info(`[ANONYMOUS Q]Succedded in putting the anonymous user in the matchmaking queue`);
-        matchmakingEvents.emit("matchmaking:anon:queued",JSON.stringify(anonymousUser));
+        matchmakingEvents.emit("matchmaking:anon:queued",JSON.stringify(anonymousPlayer));
         
         
     }catch(err){

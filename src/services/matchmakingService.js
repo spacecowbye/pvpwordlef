@@ -20,11 +20,11 @@ export const addToAnonMatchmakingQueue = async (anonymousPlayer) => {
         const stringifiedAnonymousPlayer = getStringForRedis(anonymousPlayer);
         await redis.zadd(ANONYMOUS_MATCHMAKING_QUEUE_KEY,timestamp,stringifiedAnonymousPlayer);
         logger.info(`[ANONYMOUS Q]Succedded in putting the anonymous user in the matchmaking queue`);
-        matchmakingEvents.emit("matchmaking:anon:queued",JSON.stringify(anonymousPlayer));
+        matchmakingEvents.emit("matchmaking:anon:queued",anonymousPlayer);
         
         
     }catch(err){
-        logger.error(err);
+        console.log(err);
         logger.error(`An error occured while trying to add the anonymous user to the redis queue`);
         process.exit(1);
     }

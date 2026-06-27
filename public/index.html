@@ -491,8 +491,9 @@ document.getElementById('play-button').addEventListener('click', () => {
   });
 
   // Server confirmed we're in the queue
-  socket.on('matchmaking:anon:queued', () => {
-    localStorage.setItem('user_id', player.user_id);
+  socket.on('matchmaking:anon:queued', (payload) => {
+    console.log("This is a test");
+    localStorage.setItem('user_id', payload.user_id);
 
   });
 
@@ -500,7 +501,7 @@ document.getElementById('play-button').addEventListener('click', () => {
   socket.on('matchmaking:anon:matched', (payload) => {
     console.log(payload);
     const { room_id } = payload;
-    localStorage.setItem('room_id', data.room_id);
+    localStorage.setItem('room_id', payload.room_id);
     window.location.href = `/duel/${room_id}`;
   });
 });

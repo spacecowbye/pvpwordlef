@@ -1,6 +1,6 @@
 # Current stuff (Happy path)
 1. Implement duel events
-- socket.emit(`duel:joinRoom`) when user navigates to `/duel/room_id` 
+- socket.emit(`duel:joinRoom`) when user navigates to `/duel/:room_id` 
 - after the 2nd duel join room event, the server emits event `duel:roomReady` event which starts the wordle game.
 
 2. Implement `/duel` page

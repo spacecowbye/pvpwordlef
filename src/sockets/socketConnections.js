@@ -11,7 +11,15 @@ export const registerSocketHandlers = (io) => {
     
     matchmakingEvents.on("matchmaking:anon:queued",(payload) => {
         logger.info(`Sending confirmation to client ${payload.user_id} that they have been queued`);
-        logger.info(payload);
+        // missing socket.emit here
+        const userSocket = userService.getSocketForAnonymousPlayer(payload.user_id);
+        if(userSocket){
+            userSocket.emit(`matchmaking:anon:queued`,payload);
+        }
+        else{
+            // TODO Bad Path handling here
+        }
+
     })
 
     matchmakingEvents.on("matchmaking:anon:match_found",(payload) => {

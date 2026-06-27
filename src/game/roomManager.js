@@ -64,7 +64,6 @@ class RoomManager{
 
         do{
             room_id = generateRoomId();
-            logger.info(room_id)
             attempts+=1;
             if(attempts > 100){
                 

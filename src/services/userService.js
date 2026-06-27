@@ -1,6 +1,6 @@
 import { AnonymousPlayer } from "../classes/AnonymousClasses.js";
 import { Logger } from "../utils/logger.js";
-
+import crypto from "node:crypto";
 
 const filename = import.meta.url;
 const logger = new Logger(filename);
@@ -19,6 +19,7 @@ class UserService {
         // maybe later i will intialise the user secret that we give to anonymous users here later.
         if (!this.instance){
             this.userToSocketMap = new Map();
+            this.userIdToSocketIdMap = new Map();
             logger.info(`Initialised the User Service responsible for creating users...`);
             this.instance = this;
         }
@@ -27,7 +28,16 @@ class UserService {
         }
 
     }
-    createAnonymousPlayer(user_id,socket){
+    
+    generateUserIdForSocketId(socket){
+        const user_id = crypto.randomUUID();
+        this.userIdToSocketIdMap.set(user_id,socket.id);
+        logger.info(`User ${user_id} has been mapped to his Socket ID ${socket.id}`);
+        return user_id
+    }
+    createAnonymousPlayer(socket){
+        console.log(socket);
+        const user_id = this.generateUserIdForSocketId(socket);
         logger.info(`Mapping ${user_id} to its actual socket object`);
         this.userToSocketMap.set(user_id,socket);
         logger.info(this.userToSocketMap);

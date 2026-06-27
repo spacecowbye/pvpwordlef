@@ -1,4 +1,5 @@
 import { Room } from "../classes/Room.js";
+import userService from "../services/userService.js";
 import { Logger } from "../utils/logger.js";
 import { dumpToDebugFile, generateRoomId } from "../utils/randomUtils.js";
 
@@ -31,9 +32,13 @@ class RoomManager{
         socketA.join(room_id);
         socketB.join(room_id);
 
+        const socketID_A = socketA.id;
+        const socketID_B = socketB.id;
+
         //verify both clients are connected to the same room
         const roomMembersSetA = socketA.adapter.rooms.get(room_id);
-        if( !roomMembersSetA.has(playerB.user_id) ) {
+        //need to change this logic here, 
+        if( !roomMembersSetA.has(socketID_B) ) {
             logger.warn(`Something went wrong with connecting clients to the same room`);
             process.exit(1);
         }

@@ -25,8 +25,7 @@ export const registerSocketHandlers = (io) => {
 
         socket.on("matchmaking:anon:join",async() => {
             logger.info(`A user wants to join the anonymous matchmaking queue with user_id : ${socket.id}`);
-            const user_id = socket.id ;
-            const anonymousPlayer = userService.createAnonymousPlayer(user_id,socket);
+            const anonymousPlayer = userService.createAnonymousPlayer(socket);
             await addToAnonMatchmakingQueue(anonymousPlayer);
             logger.info(`Successfully joined the anonymous matchmaking queue with user_id : ${socket.id}`);
         })

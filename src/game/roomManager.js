@@ -77,11 +77,25 @@ class RoomManager{
         this.ActiveRoomIds.add(room_id);
         return room_id ; 
     }
+    verifyRoomExists(room_id){
+        logger.info(`Checking if following room exists : ${room_id}`);
+        if(this.ActiveRoomIds.has(room_id)){
+            logger.info(`${room_id} exists in our room manager`);
+            return true;
+            
+        }
+        else{
+            return false;
+        }
+    }
+    verifyAnonymousPlayerInsideRoom(user_id, room_id){
+
+    }
+
 }
 
 
 const roomManager = new RoomManager();
 export default roomManager;
 
-roomManager.generateUniqueRoomId()
 

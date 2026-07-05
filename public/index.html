@@ -182,7 +182,7 @@
     });
 
     socket.on('matchmaking:anon:queued', (payload) => {
-      localStorage.setItem('user_idx', payload.user_id);
+      localStorage.setItem('user_id', payload.user_id);
     });
 
     socket.on('matchmaking:anon:matched', (payload) => {

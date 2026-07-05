@@ -1,11 +1,12 @@
+// duel.routes.js
+
 import express from "express";
-import { ok } from "node:assert";
-import { gameController } from "../controllers/game.controller.js";
+import { gameController, serveDuelUI } from "../controllers/game.controller.js";
 
 const router = express.Router();
 
+router.get('/duel/:room_id',serveDuelUI);
 
-router.get(`/duel/:room`,gameController);
 
 
 export default router;

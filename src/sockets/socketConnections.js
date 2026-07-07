@@ -2,6 +2,7 @@ import { Logger } from "../utils/logger.js"
 import { addToAnonMatchmakingQueue } from "../services/matchmakingService.js";
 import  userService  from "../services/userService.js";
 import { matchmakingEvents } from "../services/matchmakingService.js";
+import roomManager from "../game/roomManager.js";
 
 const filepath = import.meta.url;
 const logger = new Logger(filepath);
@@ -32,6 +33,11 @@ export const registerSocketHandlers = (io) => {
         logger.info(`A new connection recieved from socket ${socket.id} `)
 
         socket.on("duel:anon:joinRoom",(payload) => {
+            const {room_id , user_id } = payload; 
+            if(!roomManager.ActiveRoomIds.has(room_id)){
+                socket.emit(`duel:anon:NO_SUCH_ROOM`);
+            }
+
             logger.info(`Somebody wants to join a duel`);
             logger.info(payload);
         })

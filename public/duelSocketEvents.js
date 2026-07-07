@@ -14,3 +14,8 @@ socket.on("connect",() => {
     console.log(payload);
     socket.emit("duel:anon:joinRoom",payload)
 })
+
+socket.on("duel:anon:NO_SUCH_ROOM",()=>{
+    showError("No Such Room Exists on server");
+    //redirect to homepage after user clcks ok
+})

@@ -178,5 +178,7 @@ function showError(message) {
     ];
     
     const finalMessage = message || failureSayings[Math.floor(Math.random() * failureSayings.length)];
-    return showNotification(finalMessage);
+    return showNotification(finalMessage).then(() => {
+        window.location.href = "/"; // Redirects to the homepage
+    });
 }

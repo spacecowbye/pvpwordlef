@@ -29,6 +29,6 @@ export const gameController = async(req,res) => {
 
 export const serveDuelUI = (req, res) => {
     const duelPath = path.join(__dirname, "../../public/duel.html");
-    logger.info(duelPath);
+    logger.info(`Serving duel.html file to client`);
     res.sendFile(duelPath);
 };

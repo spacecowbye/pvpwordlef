@@ -284,7 +284,12 @@
     </div>
   </main>
 </div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/duelDynamicUi.js"></script>
+<script src="/duelSocketEvents.js"></script>
+
 <script>
+
 
 console.log("SCRIPT STARTED");
 const room = localStorage.getItem("room_id");
@@ -541,5 +546,6 @@ document.addEventListener('keydown', e => {
 
 console.log("Answer target:", ANSWER);
 </script>
+
 </body>
 </html>

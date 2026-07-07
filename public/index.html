@@ -187,7 +187,6 @@
 
     socket.on('matchmaking:anon:matched', (payload) => {
       const { room_id } = payload;
-      localStorage.setItem('room_id', room_id);
       window.location.href = `/duel/${room_id}`;
     });
   });

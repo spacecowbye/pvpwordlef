@@ -11,14 +11,14 @@ class RoomManager{
     constructor(){
         // A set of room Ids,a set of strings not a set of rooms
         //also these room Ids are the socket.io room names
-        this.ActiveRoomIds = new Set();
-        this.playerToRoomMapping = new Map();
+        this.ActiveRooms = new Map();
+        this.PlayerToRoomMapping = new Map();
         // mapping of room name to room object
         
 
         //
     }
-    // actually creates a socket.io room and joins both the sockets into that room
+    // actually creates a socket.io room and joins both the sockets into that room 
     createRoom(playerA,playerB){
         const socketA = playerA.socket;
         const socketB = playerB.socket;
@@ -27,6 +27,7 @@ class RoomManager{
 
         const room_id = this.generateUniqueRoomId();
         const room = new Room(room_id,players);
+        this.ActiveRooms.set(room_id,room);
 
         // make the sockets join the same room
         socketA.join(room_id);
@@ -77,26 +78,13 @@ class RoomManager{
         this.ActiveRoomIds.add(room_id);
         return room_id ; 
     }
-    getRoomIfExists(room_id){
-        logger.info(`Checking if following room exists : ${room_id}`);
-        if(this.ActiveRoomIds.has(room_id)){
-            logger.info(`${room_id} exists in our room manager`);
-            return true;
-            
-        }
-        else{
-            return false;
-        }
-    }
-    verifyAnonymousPlayerInsideRoom(user_id, room_id){
-        logger.info(`Checking if the user_id is actually in the room_id`);
+    getRoom(room_id){
         
-        if(this.playerToRoomMapping.has(user_id)){
-            const room_id = this.playerToRoomMapping.get(user_id);
+        if(this.ActiveRooms.has(room_id)){
             return room_id;
         }
         else{
-            return null ; 
+            return null;
         }
     }
 

@@ -11,5 +11,13 @@ export class Room{
         this.room_id = room_id;
         this.status = this.RoomStatus.WAITING;
     }
+    hasPlayer(player_id){
+        if(this.players[0] == player_id || this.players[1] == player_id){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
 }

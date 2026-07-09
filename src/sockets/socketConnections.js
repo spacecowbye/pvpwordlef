@@ -34,11 +34,12 @@ export const registerSocketHandlers = (io) => {
 
         socket.on("duel:anon:joinRoom",(payload) => {
             const {room_id , user_id } = payload; 
-            if(!roomManager.verifyRoomExists(room_id)){
+            const validatedRoom = roomManager.getRoom(room_id);
+            if(!validatedRoom){
                 socket.emit(`duel:anon:NO_SUCH_ROOM`);
             }
-            const room_id = roomManager.getRoomIfExists(room_id);
-            if(!room_id){
+            const validatedPlayer = validatedRoom.hasPlayer(user_id);
+            if(!SV_ROOM_ID){
                 socket.emit(`duel:anon:NO_SUCH_PLAYER`);
             }
 

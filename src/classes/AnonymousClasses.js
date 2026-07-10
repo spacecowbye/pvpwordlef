@@ -9,9 +9,9 @@ export class AnonymousPlayer {
      * @param {string} user_id 
      */
 
+    // we don't need a socket object here, if we have a mapping of user_id to socket_object done in user service
     constructor(user_id) {
-        this.socket = null ; // to be populated post matchmaking, otherwise this whole thing will be stringifed when we put into redis.
-        this.connected = true;
+        this.connected = true;  
         this.user_id = user_id // generate via crypto random uuid
     }
     destroy(){

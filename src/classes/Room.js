@@ -7,7 +7,13 @@ export class Room{
         BOTH_PERSONS_JOINED: "BOTH_PERSONS_JOINED"
     });
     constructor(room_id,playersArray){
-        this.players = playersArray
+
+
+        const player1 =  playersArray[0];
+        const player2 = playersArray[1];
+        
+        this.players = [player1, player2];
+        console.log(this.players);
         this.room_id = room_id;
         this.status = this.RoomStatus.WAITING;
     }

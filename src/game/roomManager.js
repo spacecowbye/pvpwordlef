@@ -15,23 +15,24 @@ class RoomManager{
         this.PlayerToRoomMapping = new Map();
         // mapping of room name to room object
         
-
-        //
     }
     // actually creates a socket.io room and joins both the sockets into that room 
     createRoom(playerA,playerB){
-        const socketA = playerA.socket;
-        const socketB = playerB.socket;
+        // no need for sockets now? why am i storing socketss?
+        console.log(`no need to store sockets`);
+        console.log(playerA);
+        console.log(playerB);
 
         const players = [playerA, playerB];
 
         const room_id = this.generateUniqueRoomId();
         const room = new Room(room_id,players);
+        
+        
         this.ActiveRooms.set(room_id,room);
-
+        console.log(this.ActiveRooms);
+        
         // make the sockets join the same room
-        socketA.join(room_id);
-        socketB.join(room_id);
 
         const socketID_A = socketA.id;
         const socketID_B = socketB.id;
@@ -74,12 +75,11 @@ class RoomManager{
                 return;
             }
             
-        }while(this.ActiveRoomIds.has(room_id))
-        this.ActiveRoomIds.add(room_id);
+        }while(this.ActiveRooms.has(room_id))
         return room_id ; 
     }
     getRoom(room_id){
-        
+
         if(this.ActiveRooms.has(room_id)){
             return room_id;
         }

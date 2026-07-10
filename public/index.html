@@ -160,6 +160,10 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    const socket = io();
+    socket.on('connect', () => {
+      console.log('Connected:', socket.id);
+    });
   function showScreen(id) {
     document.getElementById('start-screen').style.display = 'none';
     document.getElementById('queue-screen').style.display = 'none';
@@ -168,13 +172,7 @@
 
   document.getElementById('play-button').addEventListener('click', () => {
     showScreen('queue-screen');
-
-    const socket = io();
-
-    socket.on('connect', () => {
-      console.log('Connected:', socket.id);
-      socket.emit('matchmaking:anon:join');
-    });
+    socket.emit('matchmaking:anon:join');
 
     socket.on('connect_error', (err) => {
       console.error('Socket connection failed:', err.message);
@@ -182,6 +180,7 @@
     });
 
     socket.on('matchmaking:anon:queued', (payload) => {
+      console.log("User has been succesfully added to anonymous matchmaking queue.")
       localStorage.setItem('user_id', payload.user_id);
     });
 

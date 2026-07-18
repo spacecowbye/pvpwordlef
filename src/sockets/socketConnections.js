@@ -44,11 +44,6 @@ export const registerSocketHandlers = (io) => {
                 socket.emit(`duel:anon:NO_SUCH_ROOM`);
                 return;
             }
-            const validatedPlayer = validatedRoom.hasPlayer(user_id);
-            if(!SV_ROOM_ID){
-                socket.emit(`duel:anon:NO_SUCH_PLAYER`);
-            }
-
             logger.info(`Somebody wants to join a duel`);
             logger.info(payload);
         })

@@ -68,7 +68,8 @@ class RoomManager{
     getRoom(room_id){
 
         if(this.ActiveRooms.has(room_id)){
-            return room_id;
+            logger.info(`Fetching room object for ${room_id}`);
+            return this.ActiveRooms.get(room_id);
         }
         else{
             return null;

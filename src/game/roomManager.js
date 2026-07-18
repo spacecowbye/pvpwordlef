@@ -31,19 +31,6 @@ class RoomManager{
         
         this.ActiveRooms.set(room_id,room);
         console.log(this.ActiveRooms);
-        
-        // make the sockets join the same room
-
-        const socketID_A = socketA.id;
-        const socketID_B = socketB.id;
-
-        //verify both clients are connected to the same room
-        const roomMembersSetA = socketA.adapter.rooms.get(room_id);
-        //need to change this logic here, 
-        if( !roomMembersSetA.has(socketID_B) ) {
-            logger.warn(`Something went wrong with connecting clients to the same room`);
-            process.exit(1);
-        }
         logger.info(`Both the player Sockets for Room ${room_id} have joined the equivalant room in socket.io`);
         // const gameManager = new GameManager();
         return room;

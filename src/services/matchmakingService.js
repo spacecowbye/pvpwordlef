@@ -79,7 +79,8 @@ const runAnonymousMatchmaking = async() => {
                 logger.info(`Found a match between two Anonymous Players!`);
                 logger.info(`Passing context to and starting activating Room Manager`);
                 
-                const room = roomManager.createRoom(playerA,playerB)
+                const room = roomManager.createRoom(playerA,playerB);
+                
                 const payload = roomManager.getRoomPayloadForClient(room);
                 matchmakingEvents.emit("matchmaking:anon:match_found",payload);
 

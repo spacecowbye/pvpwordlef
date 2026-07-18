@@ -26,8 +26,13 @@ export const registerSocketHandlers = (io) => {
     matchmakingEvents.on("matchmaking:anon:match_found",(payload) => {
                 logger.info(`Matchmaking Service has found a match`);
                 logger.info(payload);
-                const { room_id } = payload;
-                io.to(room_id).emit("matchmaking:anon:matched",payload);
+                const { room_id,players } = payload;
+                const user_id_playerA = players[0];
+                const user_id_playerB = players[1];
+                const socketA = userService.getSocketForAnonymousPlayer(user_id_playerA);
+                const socketB = userService.getSocketForAnonymousPlayer(user_id_playerB);
+                socketA.emit("matchmaking:anon:matched",room_id);
+                socketB.emit("matchmaking:anon:matched",room_id);
     })
     io.on("connection",(socket) => {
         logger.info(`A new connection recieved from socket ${socket.id} `)

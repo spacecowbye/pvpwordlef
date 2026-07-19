@@ -52,7 +52,6 @@ const runAnonymousMatchmaking = async() => {
     }
 
     // now we have a queue of players whose adjacent members can be matched and game can be started
-    console.log(anonymousQueue);
     for(let i = 0 ; i < anonymousQueue.length ; i+=2 ){
         logger.info(`Check here`);
         //take the first two players for matchmaking,
@@ -71,10 +70,7 @@ const runAnonymousMatchmaking = async() => {
         
         const playerAisRemoved = results[0][1] ; 
         const playerBisRemoved = results[1][1] ;
-        if(playerAisRemoved && playerBisRemoved  ){
-            
-            
-
+        if( playerAisRemoved && playerBisRemoved  ){
             if( playerA.user_id && playerB.user_id ){
                 logger.info(`Found a match between two Anonymous Players!`);
                 logger.info(`Passing context to and starting activating Room Manager`);

@@ -1,4 +1,4 @@
-import { AnonymousPlayer } from "../classes/AnonymousClasses.js";
+import { AnonymousPlayer } from "../classes/AnonymousPlayer.js";
 import { Logger } from "../utils/logger.js";
 import crypto from "node:crypto";
 
@@ -18,8 +18,7 @@ class UserService {
         //what i need to map is socket_id string to the socket object, so i can use that socket object.
         // maybe later i will intialise the user secret that we give to anonymous users here later.
         if (!this.instance){
-            this.userToSocketMap = new Map();
-            this.userIdToSocketIdMap = new Map();
+            this.userIdToSocketMap = new Map();
             logger.info(`Initialised the User Service responsible for creating users...`);
             this.instance = this;
         }
@@ -31,15 +30,13 @@ class UserService {
     
     generateUserIdForSocketId(socket){
         const user_id = crypto.randomUUID();
-        this.userIdToSocketIdMap.set(user_id,socket.id);
         logger.info(`User ${user_id} has been mapped to his Socket ID ${socket.id}`);
         return user_id
     }
     createAnonymousPlayer(socket){
-        console.log(socket);
         const user_id = this.generateUserIdForSocketId(socket);
         logger.info(`Mapping ${user_id} to its actual socket object`);
-        this.userToSocketMap.set(user_id,socket);
+        this.userIdToSocketMap.set(user_id,socket);
         logger.info(`Sucessfully mapped ${user_id} to its socket object`);
         logger.info(`Remember the Anonymous Player object's socket is still null, only mapping has been done`);
         return new AnonymousPlayer(user_id)
@@ -48,7 +45,7 @@ class UserService {
     getSocketForAnonymousPlayer(user_id){
         try{
             logger.info(`Fetching the socket object for player ${user_id}`);
-            const socket = this.userToSocketMap.get(user_id);
+            const socket = this.userIdToSocketMap.get(user_id);
             return socket;
         }catch(err){
             logger.error(err);

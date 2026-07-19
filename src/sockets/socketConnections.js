@@ -38,22 +38,39 @@ export const registerSocketHandlers = (io) => {
         logger.info(`A new connection recieved from socket ${socket.id} `)
 
         socket.on("duel:anon:joinRoom",(payload) => {
-            const {room_id , user_id } = payload; 
-            const validatedRoom = roomManager.getRoom(room_id);
-            if(!validatedRoom){
-                socket.emit(`duel:anon:NO_SUCH_ROOM`);
-                return;
-            }
             logger.info(`Somebody wants to join a duel`);
             logger.info(payload);
+            const {room_id , user_id } = payload; 
+            const { msg } = roomManager.handleJoinRoom(room_id,user_id); 
+            switch(msg){
+                case "NO_SUCH_ROOM_ON_SERVER":
+                    socket.emit(`duel:anon:NO_SUCH_ROOM`);
+                    return;
+                case "READY_PLAYER_ONE":
+                    
+                    socket.emit(`duel:anon:READ_PLAYER_ONE`);
+                    return;
+                case "READY_PLAYER_TWO":
+                    //game manager logic here
+
+                    return;
+                case "USER_NOT_EXPECTED":
+                    logger.warn()
+                    return;
+                case "ROOM_IS_FULL":
+                    logger.warn(`Somebody tried to join an already full room ${room_id}`);
+                    return;
+
+                    
+            }
+
         })
 
 
-        socket.on("matchmaking:anon:join",async() => {
-            logger.info(`A user wants to join the anonymous matchmaking queue with user_id : ${socket.id}`);    
+        socket.on("matchmaking:anon:join",async() => {    
             const anonymousPlayer = userService.createAnonymousPlayer(socket);
             await addToAnonMatchmakingQueue(anonymousPlayer);
-            logger.info(`Successfully joined the anonymous matchmaking queue with user_id : ${socket.id}`);
+            logger.info(`Successfully joined the anonymous matchmaking queue with user_id : ${anonymousPlayer.user_id}`);
         })
 
         socket.on("disconnect",() => {

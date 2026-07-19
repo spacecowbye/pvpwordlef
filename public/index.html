@@ -172,8 +172,8 @@
 
   document.getElementById('play-button').addEventListener('click', () => {
     showScreen('queue-screen');
+    
     socket.emit('matchmaking:anon:join');
-
     socket.on('connect_error', (err) => {
       console.error('Socket connection failed:', err.message);
       showScreen('start-screen');

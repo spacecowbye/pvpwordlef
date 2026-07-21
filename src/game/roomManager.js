@@ -100,6 +100,14 @@ class RoomManager{
         return gameManager;
         
     }
+    //handle any random socket event, design the workflow for it 
+    // the socket event will be of type duel:event:action and then accompanying in its payload
+    // will be room_id and user_id
+    //correct game Manager will be found and used to process the event
+
+    handleDuelSocketEvent(payload){
+
+    }
     handleJoinRoom(room_id , user_id){
         // does room exist
         const room = this.getRoom(room_id);
@@ -126,6 +134,7 @@ class RoomManager{
                 if(room_id === mappedRoom){
                     room.addPlayer(user_id);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
+                    const gameManager = this.getGameManagerForRoomId(room_id);
                     return { msg :"READY_PLAYER_TWO" };
                 }
                 else{

@@ -18,4 +18,3 @@ export class Game{
         logger.info(`[WORDLE] For room_id ${room_id} the answer words is ${this.WORLE_ANSWER}`);
     }
 }
-const game = new Game("abcc");

@@ -73,10 +73,10 @@ export const registerSocketHandlers = (io) => {
             logger.info(`Successfully joined the anonymous matchmaking queue with user_id : ${anonymousPlayer.user_id}`);
         })
 
-        socket.on("disconnect",() => {
+        socket.on("disconnect",(reason) => {
             // #TODO 
             // if a queued socket is disconnected then remove it from the matchmaking queuue, remove it from socket mapping
-            logger.info(`${socket.id} has disconnected`);
+            logger.info(`Socket ${socket.id} has disconnected. Reason: ${reason}`);
         })
 
        

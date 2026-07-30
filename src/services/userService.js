@@ -12,13 +12,12 @@ const logger = new Logger(filename);
 
 
 class UserService {
-
-
     constructor(){
         //what i need to map is socket_id string to the socket object, so i can use that socket object.
         // maybe later i will intialise the user secret that we give to anonymous users here later.
         if (!this.instance){
             this.userIdToSocketMap = new Map();
+            this.userIdToAnonymousUserMap = new Map();
             logger.info(`Initialised the User Service responsible for creating users...`);
             this.instance = this;
         }
@@ -27,7 +26,6 @@ class UserService {
         }
 
     }
-    
     generateUserIdForSocketId(socket){
         const user_id = crypto.randomUUID();
         logger.info(`User ${user_id} has been mapped to his Socket ID ${socket.id}`);
@@ -39,8 +37,9 @@ class UserService {
         this.userIdToSocketMap.set(user_id,socket);
         logger.info(`Sucessfully mapped ${user_id} to its socket object`);
         logger.info(`Remember the Anonymous Player object's socket is still null, only mapping has been done`);
-        return new AnonymousPlayer(user_id)
-        
+        const anonymousPlayer = new AnonymousPlayer(user_id);
+        this.userIdToAnonymousUserMap.set(user_id,anonymousPlayer);
+        return anonymousPlayer; 
     }
     getSocketForAnonymousPlayer(user_id){
         try{
@@ -54,6 +53,17 @@ class UserService {
         }
       
     }
+    verifyUser(user_id){
+        if(this.userIdToAnonymousUserMap.get(user_id)){
+            logger.info(`User ${user_id} exists and is verified by the server`);
+            return this.userIdToAnonymousUserMap.get(user_id);
+        }
+        else{
+            logger.warn(`No such user has been seen by the server`);
+            return null;
+        }
+    }
+    
 }
 
 const userService = new UserService();

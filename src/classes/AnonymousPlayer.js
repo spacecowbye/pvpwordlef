@@ -19,12 +19,4 @@ export class AnonymousPlayer {
     }
 }
 
-export class AnonymousPlayerState{
-    
-    constructor(anonymousPlayer){
-        this.user_id = anonymousPlayer.user_id; 
-        // Game specific data
-        this.guesses = [];
-    }
-}
 

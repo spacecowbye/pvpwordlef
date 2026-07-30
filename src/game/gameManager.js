@@ -7,10 +7,32 @@ const logger = new Logger(filename);
 
 export class GameManager{
     
+    players = [];
+    room_id = "";
+    gameState = null;
+
     constructor(room_id){
+        logger.info(`Creating a new game Manager object for ${room_id}`);
         this.room_id = room_id;
-        logger.info(`Creating a game manager for room_id ${room_id}`);
-        this.gameState = new Game(room_id);
-    }   
+    }
+    addPlayer(anonymousUserObject){
+        this.players.push(anonymousUserObject);
+        if(this.players.length === 2){
+            console.log(this.players);
+            this.init();
+        }
+        else{
+            
+            logger.warn(`Size is ${this.players.length} and is not full`);
+        }
+    }
+    init(){
+        // start the new game
+        logger.info(`Initialising blank gameState for ${this.room_id}`);
+        this.gameState = new Game(this.room_id,this.players[0],this.players[1]);
+    }
+
+    
 
 }
+

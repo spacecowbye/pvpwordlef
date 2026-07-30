@@ -13,7 +13,13 @@ const logger = new Logger(filename);
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+
+const io = new Server(server,
+  {
+    pingTimeout : 30000,
+    pingInterval : 25000
+  }
+);
 
 const PORT = config.PORT;
 

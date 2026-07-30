@@ -12,7 +12,7 @@ const ANONYMOUS_MATCHMAKING_QUEUE_KEY = "fANONYMOUS_MATCHMAKING_QUEUE";
 const MATCHMAKING_WINDOW_SIZE = 100;
 export const matchmakingEvents = new EventEmitter();
 
-export const addToAnonMatchmakingQueue = async (anonymousPlayer) => {
+export const addToAnonMatchmakingQueue = async ( anonymousPlayer ) => {
     logger.info(`[ANONYMOUS Q] Attempting to add above User to the matchmaking Queue`);
 
     try{

@@ -27,10 +27,12 @@ class RoomManager{
 
         const room_id = this.generateUniqueRoomId();
         const room = new Room(room_id,players);
-        
+        const gameManager = new GameManager(room_id);
+
 
         // set room manager maps here
         this.ActiveRooms.set(room_id,room);
+        this.roomIdToGameManagerMapping.set(room_id,gameManager);
         this.userIdToRoomMapping.set(playerA.user_id,room_id);
         this.userIdToRoomMapping.set(playerB.user_id,room_id);
         
@@ -82,24 +84,24 @@ class RoomManager{
             return null;
         }
     }
-    getGameManagerForRoomId(room_id){
-        const gameManager = this.roomIdToGameManagerMapping.get(room_id);
-        if(!gameManager){
-            //create new game manager and return that
-            logger.info(`No Game manager found`)
-            logger.info(`First player has entered the room`);
-            const gameManager = new GameManager(room_id);
-            logger.info(`Created the gameManager for ${room_id}`);
-            this.roomIdToGameManagerMapping.set(room_id,gameManager);
-            logger.info(`Mapped the gameManager object ${gameManager} to ${room_id}`);
+    // getGameManagerForRoomId(room_id){
+    //     const gameManager = this.roomIdToGameManagerMapping.get(room_id);
+    //     if(!gameManager){
+    //         //create new game manager and return that
+    //         logger.info(`No Game manager found`)
+    //         logger.info(`First player has entered the room`);
+    //         const gameManager = new GameManager(room_id);
+    //         logger.info(`Created the gameManager for ${room_id}`);
+    //         this.roomIdToGameManagerMapping.set(room_id,gameManager);
+    //         logger.info(`Mapped the gameManager object ${gameManager} to ${room_id}`);
 
-            return gameManager;
-        }
-        logger.info(`The second player has joined the game`);
-        logger.info(`Returning an existing gameManager`);
-        return gameManager;
+    //         return gameManager;
+    //     }
+    //     logger.info(`The second player has joined the game`);
+    //     logger.info(`Returning an existing gameManager`);
+    //     return gameManager;
         
-    }
+    // }
     //handle any random socket event, design the workflow for it 
     // the socket event will be of type duel:event:action and then accompanying in its payload
     // will be room_id and user_id
@@ -111,6 +113,16 @@ class RoomManager{
     handleJoinRoom(room_id , user_id){
         // does room exist
         const room = this.getRoom(room_id);
+        const verifiedAnonymousUser = userService.verifyUser(user_id);
+        const gameManager = this.roomIdToGameManagerMapping.get(room_id);
+
+        if(!verifiedAnonymousUser){
+            logger.info(`No pvpWordle for you`);
+        }
+
+        if(!gameManager){
+            logger.info(`No Game manager found for room_id ${room_id}`);
+        }
         if(!room){
                 logger.warn(`No Room object found for ${room_id}`);
                 return { msg : "NO_SUCH_ROOM_ON_SERVER"} ; 
@@ -122,6 +134,7 @@ class RoomManager{
                 //verify player in room
                 if(room_id === mappedRoom){
                     room.addPlayer(user_id);
+                    gameManager.addPlayer(verifiedAnonymousUser);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
                     return  { msg : "READY_PLAYER_ONE"};
                 }
@@ -134,7 +147,7 @@ class RoomManager{
                 if(room_id === mappedRoom){
                     room.addPlayer(user_id);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
-                    const gameManager = this.getGameManagerForRoomId(room_id);
+                    gameManager.addPlayer(verifiedAnonymousUser);
                     return { msg :"READY_PLAYER_TWO" };
                 }
                 else{

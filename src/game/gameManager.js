@@ -10,6 +10,7 @@ export class GameManager{
     players = [];
     room_id = "";
     gameState = null;
+    
 
     constructor(room_id){
         logger.info(`Creating a new game Manager object for ${room_id}`);

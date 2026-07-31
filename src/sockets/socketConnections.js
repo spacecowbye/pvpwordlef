@@ -47,21 +47,20 @@ export const registerSocketHandlers = (io) => {
                     socket.emit(`duel:anon:NO_SUCH_ROOM`);
                     return;
                 case "READY_PLAYER_ONE":
-                    
-                    socket.emit(`duel:anon:READ_PLAYER_ONE`);
+                    socket.emit(`duel:anon:READY_PLAYER_ONE`);
                     return;
                 case "READY_PLAYER_TWO":
-                    //game manager logic here
-
+                    socket.emit(`duel:anon:START_GAME`)
                     return;
                 case "USER_NOT_EXPECTED":
-                    logger.warn()
+                    logger.error(`This should not have happened`);
+                    logger.error(`How do we have a user verified by the mathchmaking service but unknow here`);
+                    socket.emit(`duel:anon:USER_NOT_EXPECTED`);
                     return;
                 case "ROOM_IS_FULL":
+                    socket.emit(`duel:anon:IMPROPER_CONDUCT_LAD`);
                     logger.warn(`Somebody tried to join an already full room ${room_id}`);
-                    return;
-
-                    
+                    return;                    
             }
 
         })

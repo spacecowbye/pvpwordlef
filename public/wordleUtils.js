@@ -16,7 +16,7 @@ function isValidWordleWord(word){
 }
 
 async function loadWords() {
-    const resp = await fetch("/assets/allowed_words.txt");
+    const resp = await fetch("https://gist.githubusercontent.com/cfreshman/cdcdf777450c5b5301e439061d29694c/raw/d7c9e02d45afd26e12a71b4564189a949c29e8a9/wordle-allowed-guesses.txt");
     const data = await resp.text();
     const ALLOWED_GUESSES = data.split("\n");
     ALLOWED_GUESSES.forEach((val) => {

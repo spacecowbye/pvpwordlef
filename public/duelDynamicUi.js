@@ -165,19 +165,8 @@ function showNotification(message) {
     });
 }
 
-function showError(message) {
-    const failureSayings = [
-        "Expected: 42, Your Output: null. So close!",
-        "Passed 5/5 sample cases. Failed 98/100 hidden cases.",
-        "Edge cases? Never heard of her.",
-        "Runtime Error. Time to flip burgers.",
-        "Wrong Answer. Yeah, time to switch majors.",
-        "Your job prospects just took a segmentation dump.",
-        "At this rate, you’ll be debugging cash registers instead of code.",
-        "Congrats, you've unlocked the 'Unpaid Internship' achievement."
-    ];
-    
-    const finalMessage = message || failureSayings[Math.floor(Math.random() * failureSayings.length)];
+function showError(message) {    
+    const finalMessage = message 
     return showNotification(finalMessage).then(() => {
         window.location.href = "/"; // Redirects to the homepage
     });

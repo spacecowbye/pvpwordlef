@@ -44,13 +44,14 @@ export const registerSocketHandlers = (io) => {
             const { msg } = roomManager.handleJoinRoom(room_id,user_id); 
             switch(msg){
                 case "NO_SUCH_ROOM_ON_SERVER":
+                    logger.info(`Emitting event for NO_SUCH_ROOM_ON_SERVER`);
                     socket.emit(`duel:anon:NO_SUCH_ROOM`);
                     return;
                 case "READY_PLAYER_ONE":
                     socket.emit(`duel:anon:READY_PLAYER_ONE`);
                     return;
                 case "READY_PLAYER_TWO":
-                    socket.emit(`duel:anon:START_GAME`)
+                    socket.emit(`duel:anon:ROOM_READY`);
                     return;
                 case "USER_NOT_EXPECTED":
                     logger.error(`This should not have happened`);

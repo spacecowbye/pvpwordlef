@@ -13,13 +13,8 @@ socket.on("connect", () => {
     room_id,
     user_id,
   };
-  console.log(payload);
+  console.log(payload); 
   socket.emit("duel:anon:joinRoom", payload);
-});
-
-socket.on("duel:anon:NO_SUCH_ROOM", () => {
-  showError("No Such Room Exists on server");
-  // redirect to homepage after user clcks ok
 });
 
 // 2. Handle missing room error
@@ -29,12 +24,12 @@ socket.on("duel:anon:NO_SUCH_ROOM", () => {
 
 // 3. Handle Player 1 waiting state
 socket.on("duel:anon:READY_PLAYER_ONE", () => {
-  showToast("Waiting for an opponent to join...", 4000);
+  showToast("Waiting for an opponent to join...", 2000);
   // Optional: Update local state / render "Waiting" spinner in your game UI
 });
 
 // 4. Handle Player 2 join / Game Start state
-socket.on("duel:anon:START_GAME", () => {
+socket.on("duel:anon:ROOM_READY", () => {
   showToast("Opponent connected! Game starting...", 2500);
   // Trigger game initialization or transition to match board
   onStartGame();

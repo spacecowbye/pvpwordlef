@@ -22,9 +22,10 @@ export class GameManager{
             console.log(this.players);
             this.init();
         }
-        else{
+        else if(this.players.length > 2){
             
             logger.warn(`Size is ${this.players.length} and is not full`);
+            process.exit(1);
         }
     }
     init(){

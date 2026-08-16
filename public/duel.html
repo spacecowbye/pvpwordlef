@@ -290,10 +290,9 @@
 <script src="/wordleUtils.js"></script>
 <script>
 
-
 console.log("SCRIPT STARTED");
-const room = localStorage.getItem("room_id");
-console.log(room)
+const ANSWER="SHARP";
+
 let currentRow   = 0;
 let currentGuess = '';
 let gameOver     = false;
@@ -393,8 +392,12 @@ function updateKeyboard(guess, evaluation) {
 async function submitGuess() {
   if (gameOver) return;
   if (currentGuess.length !== 5) { setStatus('Not enough letters.'); shakeCurrentRow(); return; }
-  if (!WORDS.includes(currentGuess)) { setStatus('Not in word list.'); shakeCurrentRow(); return; }
-
+  console.log(ALLOWED_WORDS_SET);
+  console.log(currentGuess);
+  
+  console.log(ALLOWED_WORDS_SET.has("media"));
+  console.log(ALLOWED_WORDS_SET.has(currentGuess));
+  if (!ALLOWED_WORDS_SET.has(currentGuess)) { setStatus('Not in word list'); shakeCurrentRow(); return }
   const evaluation = evaluate(currentGuess, ANSWER);
   const guess = currentGuess;
   currentGuess = '';
@@ -447,7 +450,6 @@ document.addEventListener('keydown', e => {
   }
 });
 
-console.log("Answer target:", ANSWER);
 </script>
 
 </body>

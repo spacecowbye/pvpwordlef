@@ -290,8 +290,7 @@
 <script src="/wordleUtils.js"></script>
 <script>
 
-console.log("SCRIPT STARTED");
-const ANSWER="SHARP";
+const ANSWER="sharp";
 
 let currentRow   = 0;
 let currentGuess = '';
@@ -349,6 +348,9 @@ function evaluate(guess, answer) {
     const idx = answerLeft.indexOf(guess[i]);
     if (idx !== -1) { result[i] = 'present'; answerLeft[idx] = null; }
   }
+  console.log(`Guess = ${guess}`);
+  console.log(`Answer = ${answer}`);
+  console.log(result);
   return result;
 }
 

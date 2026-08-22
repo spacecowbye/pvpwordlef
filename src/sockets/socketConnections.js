@@ -9,7 +9,9 @@ const logger = new Logger(filepath);
 
 
 export const registerSocketHandlers = (io) => {
-    
+    //socket middleware handling
+
+
     matchmakingEvents.on("matchmaking:anon:queued",(payload) => {
         logger.info(`Sending confirmation to client ${payload.user_id} that they have been queued`);
         // missing socket.emit here
@@ -36,7 +38,7 @@ export const registerSocketHandlers = (io) => {
     })
     io.on("connection",(socket) => {
         logger.info(`A new connection recieved from socket ${socket.id} `)
-
+        
         socket.on("duel:anon:joinRoom",(payload) => {
             logger.info(`Somebody wants to join a duel`);
             logger.info(payload);
@@ -65,8 +67,10 @@ export const registerSocketHandlers = (io) => {
             }
 
         })
-
-
+        socket.on("duel:anon:SUBMIT_GUESS",(payload) => {
+            logger.info(payload);
+        })
+        
         socket.on("matchmaking:anon:join",async() => {    
             const anonymousPlayer = userService.createAnonymousPlayer(socket);
             await addToAnonMatchmakingQueue(anonymousPlayer);

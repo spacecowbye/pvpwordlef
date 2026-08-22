@@ -17,3 +17,4 @@
 
 1. Handle socket disconnect gracefully from matchmaking queue, remove socket and user from matchmaking queue
 2. Implement home screen similar to vibe-coded pvp wordle
+3. Changing url on client should give no such room instead gives room is full? 

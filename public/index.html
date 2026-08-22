@@ -160,6 +160,9 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("room_id");
+
     const socket = io();
     socket.on('connect', () => {
       console.log('Connected:', socket.id);
@@ -185,6 +188,7 @@
     });
 
     socket.on('matchmaking:anon:matched', ( room_id ) => {
+      localStorage.setItem("room_id",room_id);
       window.location.href = `/duel/${room_id}`;
     });
   });

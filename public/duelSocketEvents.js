@@ -1,15 +1,15 @@
 // linked to duel.html
+const room_id = localStorage.getItem("room_id");
+const user_id = localStorage.getItem("user_id");
 
-const chunks = window.location.href.split("/");
-const lastIndex = chunks.length - 1;
-const room_id = chunks[lastIndex];
-
-const socket = io();
-
+const socket = io({
+  auth : {
+    "user_id" : user_id
+  }
+})
 socket.on("connect", () => {
   console.log(`Connected to server on /duel page`);
-  const user_id = localStorage.getItem("user_id");
-  payload = {
+  const payload = {
     room_id,
     user_id,
   };

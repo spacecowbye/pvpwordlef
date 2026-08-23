@@ -56,3 +56,6 @@ socket.on("duel:anon:IMPROPER_CONDUCT_LAD", () => {
 function onStartGame(){
     console.log(`Starting the game baby`);
 }
+socket.on("duel:anon:BEGIN_GAME",() => {
+  console.log(`Part of the room now baby`);
+})

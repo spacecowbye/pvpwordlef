@@ -19,8 +19,13 @@ class RoomManager{
         
         
     }
+
+    //verify service
+    verifyPayloadForRoomAndUser(room_id,user_id){
+        
+    }
     createRoom(playerA,playerB){
-        // no need for sockets now? why am i storing socketss?
+        //creats room object on index page
         logger.info(playerA);
 
         const players = [playerA, playerB];
@@ -110,7 +115,7 @@ class RoomManager{
     handleDuelSocketEvent(payload){
         
     }
-    handleJoinRoom(room_id , user_id){
+    handleJoinRoom(room_id , user_id, socket){
         // does room exist
         const room = this.getRoom(room_id);
         logger.info(`Room found for ${room_id} below`);
@@ -132,6 +137,11 @@ class RoomManager{
                 return { msg : "NO_SUCH_ROOM_ON_SERVER"} ; 
         }
         const mappedRoom = roomManager.userIdToRoomMapping.get(user_id);
+        console.log(`Before updating`);
+        userService.userIdToSocketMap.set(user_id,socket);
+        console.log(`After updating`);
+        console.log(userService.userIdToSocketMap);
+        
         switch(room.getRoomSize()){
             case 0: 
                 logger.info(`${user_id} is the first person to join the room ${room_id}`);
@@ -139,6 +149,7 @@ class RoomManager{
                 if(room_id === mappedRoom){
                     room.addPlayer(user_id);
                     gameManager.addPlayer(verifiedAnonymousUser);
+                    socket.join(room_id);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
                     return  { msg : "READY_PLAYER_ONE"};
                 }
@@ -152,6 +163,7 @@ class RoomManager{
                     room.addPlayer(user_id);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
                     gameManager.addPlayer(verifiedAnonymousUser);
+                    socket.join(room_id);
                     return { msg :"READY_PLAYER_TWO" };
                 }
                 else{

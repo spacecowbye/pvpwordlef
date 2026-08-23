@@ -43,16 +43,24 @@ export const registerSocketHandlers = (io) => {
             logger.info(`Somebody wants to join a duel`);
             logger.info(payload);
             const {room_id , user_id } = payload; 
-            const { msg } = roomManager.handleJoinRoom(room_id,user_id); 
+            if(!room_id || !user_id){
+                // todo handle this client side
+                socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
+                return;
+            }
+            //todo verify room and user before passing them on.
+            const { msg } = roomManager.handleJoinRoom(room_id,user_id, socket); 
             switch(msg){
                 case "NO_SUCH_ROOM_ON_SERVER":
                     logger.info(`Emitting event for NO_SUCH_ROOM_ON_SERVER`);
                     socket.emit(`duel:anon:NO_SUCH_ROOM`);
                     return;
                 case "READY_PLAYER_ONE":
+                    
                     socket.emit(`duel:anon:READY_PLAYER_ONE`);
                     return;
                 case "READY_PLAYER_TWO":
+                    io.to(room_id).emit(`duel:anon:BEGIN_GAME`);
                     socket.emit(`duel:anon:ROOM_READY`);
                     return;
                 case "USER_NOT_EXPECTED":

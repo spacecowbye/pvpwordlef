@@ -1,5 +1,11 @@
 // linked to duel.html
-const room_id = localStorage.getItem("room_id");
+// if url is not equal to room_id in payload then raise error?
+
+const url = window.location.href;
+const chunks = url.split('/');
+const room_id = chunks.at(-1);
+
+
 const user_id = localStorage.getItem("user_id");
 
 const socket = io({
@@ -7,6 +13,7 @@ const socket = io({
     "user_id" : user_id
   }
 })
+
 socket.on("connect", () => {
   console.log(`Connected to server on /duel page`);
   const payload = {
@@ -15,6 +22,7 @@ socket.on("connect", () => {
   };
   console.log(payload); 
   socket.emit("duel:anon:joinRoom", payload);
+  
 });
 
 // 2. Handle missing room error

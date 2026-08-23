@@ -113,15 +113,19 @@ class RoomManager{
     handleJoinRoom(room_id , user_id){
         // does room exist
         const room = this.getRoom(room_id);
+        logger.info(`Room found for ${room_id} below`);
+        console.log(room);
         const verifiedAnonymousUser = userService.verifyUser(user_id);
         const gameManager = this.roomIdToGameManagerMapping.get(room_id);
 
         if(!verifiedAnonymousUser){
             logger.info(`No pvpWordle for you`);
+            //#TODO handle this return
         }
 
         if(!gameManager){
             logger.info(`No Game manager found for room_id ${room_id}`);
+            //#TODO handle this return
         }
         if(!room){
                 logger.warn(`No Room object found for ${room_id}`);

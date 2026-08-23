@@ -53,6 +53,11 @@ socket.on("duel:anon:IMPROPER_CONDUCT_LAD", () => {
   showError("This duel room is already full.");
 });
 
+// 7. Invalid arguements passed in by client
+socket.on("duel:anon:INVALID_ARGUEMENTS", () => {
+  showError("Invalid room or player data");
+});
+
 function onStartGame(){
     console.log(`Starting the game baby`);
 }

@@ -21,8 +21,15 @@ class RoomManager{
     }
 
     //verify service
-    verifyPayloadForRoomAndUser(room_id,user_id){
-        
+    verifyRoom(client_room_id){
+        // cant trust room_id here, provided by client
+        return this.roomIdToRoomMapping.has(client_room_id) ? client_room_id : false
+    }
+    verifyUser(client_user_id){
+        return this.userIdToRoomMapping.has(client_user_id) ? client_user_id : false
+    }
+    verifyUserInRoom(client_room_id,client_user_id){
+        return this.userIdToRoomMapping.get(client_user_id) === client_room_id ;
     }
     createRoom(playerA,playerB){
         //creats room object on index page

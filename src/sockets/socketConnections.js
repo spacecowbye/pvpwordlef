@@ -43,13 +43,25 @@ export const registerSocketHandlers = (io) => {
             logger.info(`Somebody wants to join a duel`);
             logger.info(payload);
             const {room_id , user_id } = payload; 
-            if(!room_id || !user_id){
-                // todo handle this client side
+
+            let verified_room_id = roomManager.verifyRoom(room_id);
+            if(!verified_room_id){
                 socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
-                return;
+                return ;
             }
+            let verified_user_id = roomManager.verifyUser(user_id);
+            if(!verified_user_id){
+                socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
+                return ;
+            }
+            const isRightUserInRightRoom = roomManager.verifyUserInRoom(room_id,user_id);
+            if(!isRightUserInRightRoom){
+                socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
+                return ;
+            }
+
             //todo verify room and user before passing them on.
-            const { msg } = roomManager.handleJoinRoom(room_id,user_id, socket); 
+            const { msg } = roomManager.handleJoinRoom(verified_room_id,verified_user_id, socket); 
             switch(msg){
                 case "NO_SUCH_ROOM_ON_SERVER":
                     logger.info(`Emitting event for NO_SUCH_ROOM_ON_SERVER`);

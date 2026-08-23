@@ -11,9 +11,9 @@ class RoomManager{
     constructor(){
         // A set of room Ids,a set of strings not a set of rooms
         //also these room Ids are the socket.io room names
-        this.ActiveRooms = new Map();
+        
         this.userIdToRoomMapping = new Map();
-
+        this.roomIdToRoomMapping = new Map();
         //called after first duel:anon:joinRoom occurs
         this.roomIdToGameManagerMapping = new Map();
         
@@ -36,7 +36,7 @@ class RoomManager{
 
 
         // set room manager maps here
-        this.ActiveRooms.set(room_id,room);
+        this.roomIdToRoomMapping.set(room_id,room);
         this.roomIdToGameManagerMapping.set(room_id,gameManager);
         this.userIdToRoomMapping.set(playerA.user_id,room_id);
         this.userIdToRoomMapping.set(playerB.user_id,room_id);
@@ -44,9 +44,7 @@ class RoomManager{
         logger.info(`RoomManager : userIdToRoomMapping`);
         logger.info(Object.fromEntries(this.userIdToRoomMapping));
         
-        logger.info(`RoomManager : ActiveRooms`);
-        logger.info(Object.fromEntries(this.ActiveRooms));
-
+        
         return room;
     }
     
@@ -58,6 +56,7 @@ class RoomManager{
             players
         }
     }
+    //todo move this function into room object
     generateUniqueRoomId(){
         let attempts = 0;
         let room_id = "";
@@ -75,14 +74,36 @@ class RoomManager{
                 return;
             }
             
-        }while(this.ActiveRooms.has(room_id))
+        }while(this.roomIdToRoomMapping.has(room_id))
         return room_id ; 
+    }
+    getRoomSize(room_id){
+        // room_id passed here is trusted and verified to be real.
+        // otherwise it wouldnt reach this stage
+        let room = this.roomIdToRoomMapping.get(room_id);
+        return room.players.length;
+    }
+    addPlayerToRoom(room_id,user_id){
+        // room_id is trused and verified here, user_id is expected to be in this room.
+        let room = this.roomIdToRoomMapping.get(room_id);
+        logger.info(`Attemping to add ${user_id} to ${room_id}`);
+        if(room.size < 2 && !room.players.includes(user_id)){
+            
+            room.players.push(user_id);
+            room.size += 1
+            logger.info(room);
+        }
+        else{
+            logger.warn(`Something bad happened while adding ${user_id} to ${room_id}`);
+            process.exit(1);
+        }
+
     }
     getRoom(room_id){
 
-        if(this.ActiveRooms.has(room_id)){
+        if(this.roomIdToRoomMapping.has(room_id)){
             logger.info(`Fetching room object for ${room_id}`);
-            return this.ActiveRooms.get(room_id);
+            return this.roomIdToRoomMapping.get(room_id);
         }
         else{
             logger.warn(`No such room found on the server`);
@@ -142,12 +163,13 @@ class RoomManager{
         console.log(`After updating`);
         console.log(userService.userIdToSocketMap);
         
-        switch(room.getRoomSize()){
+        const roomSize = this.getRoomSize(room_id);
+        switch(roomSize){
             case 0: 
                 logger.info(`${user_id} is the first person to join the room ${room_id}`);
                 //verify player in room
                 if(room_id === mappedRoom){
-                    room.addPlayer(user_id);
+                    this.addPlayerToRoom(room_id,user_id);
                     gameManager.addPlayer(verifiedAnonymousUser);
                     socket.join(room_id);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
@@ -160,7 +182,7 @@ class RoomManager{
             case 1:
                 logger.info(`${user_id} is the second person to join the room ${room_id}`);
                 if(room_id === mappedRoom){
-                    room.addPlayer(user_id);
+                    this.addPlayerToRoom(room_id,user_id);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
                     gameManager.addPlayer(verifiedAnonymousUser);
                     socket.join(room_id);

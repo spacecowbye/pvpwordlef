@@ -397,7 +397,6 @@ async function submitGuess() {
   console.log(ALLOWED_WORDS_SET);
   console.log(currentGuess);
   
-  console.log(ALLOWED_WORDS_SET.has("media"));
   console.log(ALLOWED_WORDS_SET.has(currentGuess));
   if (!ALLOWED_WORDS_SET.has(currentGuess)) { setStatus('Not in word list'); shakeCurrentRow(); return }
   const evaluation = evaluate(currentGuess, ANSWER);

@@ -88,24 +88,38 @@ class RoomManager{
         // room_id passed here is trusted and verified to be real.
         // otherwise it wouldnt reach this stage
         let room = this.roomIdToRoomMapping.get(room_id);
-        return room.players.length;
+        return room.size;
     }
-    addPlayerToRoom(room_id,user_id){
-        // room_id is trused and verified here, user_id is expected to be in this room.
-        let room = this.roomIdToRoomMapping.get(room_id);
-        logger.info(`Attemping to add ${user_id} to ${room_id}`);
-        if(room.size < 2 && !room.players.includes(user_id)){
-            
-            room.players.push(user_id);
-            room.size += 1
-            logger.info(room);
-        }
-        else{
-            logger.warn(`Something bad happened while adding ${user_id} to ${room_id}`);
-            process.exit(1);
-        }
+   addPlayerToRoom(room_id, anonymousUserObject) {
+    //room_id has been verified to true here
+    const room = this.roomIdToRoomMapping.get(room_id);
+    if (!room) {
+        logger.error(`Room ${room_id} not found`);
+    }
 
+    const current_user_id = anonymousUserObject.user_id;
+    logger.info(`Attempting to add ${current_user_id} to ${room_id}`);
+
+    // Check if the player already exists in the room
+    const isDuplicate = room.players.some(player => player.user_id === current_user_id);
+    if (isDuplicate) {
+        logger.info(`Cannot join your own game ${current_user_id}`);
+        // #todo handle this later so that opening in new tab does not consider you as seperate player.
+        process.exit(1);
     }
+
+    // Check if room is already full (max 2 players)
+    if (room.players.length >= 2) {
+        logger.warn(`Room ${room_id} is full`);
+        
+    }
+
+    // Add the player safely
+    room.players.push(anonymousUserObject);
+    room.size = room.players.length;
+
+    console.log(room);
+}
     getRoom(room_id){
 
         if(this.roomIdToRoomMapping.has(room_id)){
@@ -140,7 +154,9 @@ class RoomManager{
     // will be room_id and user_id
     //correct game Manager will be found and used to process the event
 
-    handleDuelSocketEvent(payload){
+    handleDuelSocketEvent(room_id,user_id,attemptedGuess){
+        //room_id , user_id have already been verified to exist on server.    
+        let gameManagerForThisGame = this.roomIdToGameManagerMapping(room_id);
         
     }
     handleJoinRoom(room_id , user_id, socket){
@@ -165,19 +181,16 @@ class RoomManager{
                 return { msg : "NO_SUCH_ROOM_ON_SERVER"} ; 
         }
         const mappedRoom = roomManager.userIdToRoomMapping.get(user_id);
-        console.log(`Before updating`);
         userService.userIdToSocketMap.set(user_id,socket);
-        console.log(`After updating`);
-        console.log(userService.userIdToSocketMap);
         
         const roomSize = this.getRoomSize(room_id);
+        console.log(`Room size = ${roomSize}`);
         switch(roomSize){
             case 0: 
                 logger.info(`${user_id} is the first person to join the room ${room_id}`);
                 //verify player in room
                 if(room_id === mappedRoom){
-                    this.addPlayerToRoom(room_id,user_id);
-                    gameManager.addPlayer(verifiedAnonymousUser);
+                    this.addPlayerToRoom(room_id,verifiedAnonymousUser);
                     socket.join(room_id);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
                     return  { msg : "READY_PLAYER_ONE"};
@@ -189,9 +202,8 @@ class RoomManager{
             case 1:
                 logger.info(`${user_id} is the second person to join the room ${room_id}`);
                 if(room_id === mappedRoom){
-                    this.addPlayerToRoom(room_id,user_id);
+                    this.addPlayerToRoom(room_id,verifiedAnonymousUser);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
-                    gameManager.addPlayer(verifiedAnonymousUser);
                     socket.join(room_id);
                     return { msg :"READY_PLAYER_TWO" };
                 }
@@ -202,7 +214,12 @@ class RoomManager{
             case 2:
                 logger.warn(`Somebody tried to join an already full room ${room_id}`);
                 return { msg : "ROOM_IS_FULL" } ;
+                
                 break;   
+            default:
+                logger.warn(`something broker here`);
+                break;
+
         }
             
     }

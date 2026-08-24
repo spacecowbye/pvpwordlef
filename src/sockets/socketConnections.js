@@ -41,9 +41,7 @@ export const registerSocketHandlers = (io) => {
         
         socket.on("duel:anon:joinRoom",(payload) => {
             logger.info(`Somebody wants to join a duel`);
-            logger.info(payload);
             const {room_id , user_id } = payload; 
-
             let verified_room_id = roomManager.verifyRoom(room_id);
             if(!verified_room_id){
                 socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
@@ -88,7 +86,23 @@ export const registerSocketHandlers = (io) => {
 
         })
         socket.on("duel:anon:SUBMIT_GUESS",(payload) => {
-            logger.info(payload);
+            const {room_id , user_id , attemptedGuess } = payload; 
+            let verified_room_id = roomManager.verifyRoom(room_id);
+            if(!verified_room_id){
+                socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
+                return;
+            }
+            let verified_user_id = roomManager.verifyUser(user_id);
+            if(!verified_user_id){
+                socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
+                return;
+            }
+            const isRightUserInRightRoom = roomManager.verifyUserInRoom(room_id,user_id);
+            if(!isRightUserInRightRoom){
+                socket.emit(`duel:anon:INVALID_ARGUEMENTS`);
+                return;
+            }
+            roomManager.handleDuelSocketEvent(verified_room_id,verified_user_id,attemptedGuess);
         })
         
         socket.on("matchmaking:anon:join",async() => {    

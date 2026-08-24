@@ -36,7 +36,6 @@ class UserService {
         logger.info(`Mapping ${user_id} to its actual socket object`);
         this.userIdToSocketMap.set(user_id,socket);
         logger.info(`Sucessfully mapped ${user_id} to its socket object`);
-        logger.info(`Remember the Anonymous Player object's socket is still null, only mapping has been done`);
         const anonymousPlayer = new AnonymousPlayer(user_id);
         this.userIdToAnonymousUserMap.set(user_id,anonymousPlayer);
         return anonymousPlayer; 

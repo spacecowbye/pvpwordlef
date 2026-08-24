@@ -61,6 +61,15 @@ socket.on("duel:anon:INVALID_ARGUEMENTS", () => {
 function onStartGame(){
     console.log(`Starting the game baby`);
 }
+
+function submitGuess(attemptedGuess){
+
+  socket.emit(`duel:anon:SUBMIT_GUESS`,{
+      "room_id" : room_id,
+      "user_id" : user_id,
+      "attemptedGuess" : attemptedGuess
+  })
+}
 socket.on("duel:anon:BEGIN_GAME",() => {
   console.log(`Part of the room now baby`);
 })

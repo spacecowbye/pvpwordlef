@@ -4,14 +4,26 @@ import { getRandomWordforWordle } from "../utils/gameUtils.js";
 const filename = import.meta.url ;
 const logger = new Logger(filename);
 
+// export class Room {
+//     constructor(room_id, playersArray) {
+//         this.expectedPlayers = [playersArray[0], playersArray[1]];
+//         this.size = 0;
+//         this.players = []; // Stores active user_ids who called joinRoom
+//         this.room_id = room_id;
+//     }
+// }
 export class Game{
     // this is the entire game state by itself
 
     
+    // Room is an object here
 
-    constructor(room_id,playerA,playerB){
-
-        logger.info(`Creating a new game Object`);
+    constructor(Room){
+        logger.info(`Creating a new game Object from an existing Room object`);
+        this.room_id = Room.room_id
+        this.players = {
+            
+        }
         this.WORLE_ANSWER = getRandomWordforWordle()    
         this.players = {
             [ playerA.user_id ] : {

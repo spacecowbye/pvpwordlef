@@ -13,6 +13,8 @@ export class AnonymousPlayer {
     constructor(user_id) {
         this.connected = true;  
         this.user_id = user_id // generate via crypto random uuid
+        this.attemptCount = 0;
+        this.attempts = [];
     }
     destroy(){
     

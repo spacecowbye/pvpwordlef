@@ -117,6 +117,7 @@ class RoomManager{
 
     handleDuelSocketEvent(room_id,user_id,attemptedGuess){
         //room_id , user_id have already been verified to exist on server.    
+        logger.info(`Recieved ${attemptedGuess} from user ${user_id} in room ${room_id}`);
         return;        
     }
     handleJoinRoom(room_id , user_id, socket){

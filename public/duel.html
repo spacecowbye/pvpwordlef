@@ -396,7 +396,7 @@ async function submitGuess() {
   if (currentGuess.length !== 5) { setStatus('Not enough letters.'); shakeCurrentRow(); return; }
   console.log(ALLOWED_WORDS_SET);
   console.log(currentGuess);
-  
+  submitGuessToServer(currentGuess);
   console.log(ALLOWED_WORDS_SET.has(currentGuess));
   if (!ALLOWED_WORDS_SET.has(currentGuess)) { setStatus('Not in word list'); shakeCurrentRow(); return }
   const evaluation = evaluate(currentGuess, ANSWER);

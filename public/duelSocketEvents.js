@@ -62,8 +62,8 @@ function onStartGame(){
     console.log(`Starting the game baby`);
 }
 
-function submitGuess(attemptedGuess){
-
+function submitGuessToServer(attemptedGuess){
+  console.log(`Submitting ${attemptedGuess} to server`);
   socket.emit(`duel:anon:SUBMIT_GUESS`,{
       "room_id" : room_id,
       "user_id" : user_id,

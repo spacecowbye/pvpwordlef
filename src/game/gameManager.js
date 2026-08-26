@@ -17,6 +17,7 @@ class GameManager{
     }
     //input is room object
     startGame(Room){
+        logger.info(`Starting game for room_id ${Room.room_id}`);
         const gameState = new Game(Room);
     } 
 }

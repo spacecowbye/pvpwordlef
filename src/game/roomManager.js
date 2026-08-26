@@ -159,8 +159,9 @@ class RoomManager{
                     this.addPlayerToRoom(verified_room_id,verifiedAnonymousUser);
                     logger.info(`${user_id} has joined room ${room_id} as a player`);
                     socket.join(verified_room_id);
+                    gameManager.startGame(room);
                     return { msg :"READY_PLAYER_TWO" };
-                    gameManager.startGame()
+                 
                 }
                 else{
                     return  { msg : "USER_NOT_EXPECTED" } ;

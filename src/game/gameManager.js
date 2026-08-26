@@ -5,23 +5,22 @@ const filename = import.meta.url;
 const logger = new Logger(filename);
 
 
-export class GameManager{
-    
-    room_id = "";
-    gameState = null;
-    
+// GameManager is like Room Manager should be all knowing and single instance only,
+// get game data, manipulate it save it and send to consumers
 
-    constructor(room_id){
-        logger.info(`Creating a new game Manager object for ${room_id}`);
-        this.room_id = room_id;
-    }  
-    init(){
-        // start the new game
-        logger.info(`Initialising blank gameState for ${this.room_id}`);
-        this.gameState = new Game(this.room_id,this.players[0],this.players[1]);
+class GameManager{
+
+    constructor(){
+        logger.info(`Initialsing Game Manager service`);
+        //stores mapping of room_id to game state
+        this.roomIdToGameStateMap = new Map();
     }
-
-    
-
+    //input is room object
+    startGame(Room){
+        const gameState = new Game(Room);
+    } 
 }
+
+const gameManager = new GameManager();
+export default gameManager;
 

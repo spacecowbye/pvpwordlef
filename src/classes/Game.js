@@ -20,22 +20,9 @@ export class Game{
 
     constructor(Room){
         logger.info(`Creating a new game Object from an existing Room object`);
-        this.room_id = Room.room_id
-        this.players = {
-            
-        }
-        this.WORLE_ANSWER = getRandomWordforWordle()    
-        this.players = {
-            [ playerA.user_id ] : {
-                attemptCount : 0,
-                attempts : []
-            },
-            [ playerB.user_id ] : {
-                attemptCount : 0,
-                attempts : []
-            }
-        };
-        this.room_id = room_id;
+        this.room_id = Room.room_id;
+        this.players = Room.players;
+        this.WORLE_ANSWER = getRandomWordforWordle();
         logger.info(`[WORDLE] For room_id ${room_id} the answer words is ${this.WORLE_ANSWER}`);
         console.log(this);
     }

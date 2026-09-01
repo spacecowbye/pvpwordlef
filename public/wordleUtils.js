@@ -16,15 +16,14 @@ function isValidWordleWord(word){
     }
 }
 
+
+
 async function loadWords() {
     const resp = await fetch("https://gist.githubusercontent.com/cfreshman/8b92bc418b43096094cf5d1b0eea8f84/raw/2519c8c22e3274b7a665fe11ab233a96416defc2/nyt-wordle-allowed-guesses-2026-03-06.txt");
     const data = await resp.text();
     const ALLOWED_GUESSES = data.split("\n");
     ALLOWED_GUESSES.forEach((val) => {
         const trimmed_val = val.trim().toLowerCase();
-        if(trimmed_val === "sharp"){
-            console.log(`Found ${trimmed_val}`);
-        }
         ALLOWED_WORDS_SET.add(trimmed_val);
     })
 }

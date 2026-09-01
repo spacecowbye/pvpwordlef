@@ -3,6 +3,11 @@ import { addToAnonMatchmakingQueue } from "../services/matchmakingService.js";
 import  userService  from "../services/userService.js";
 import { matchmakingEvents } from "../services/matchmakingService.js";
 import roomManager from "../game/roomManager.js";
+import { gameManagerEvents } from "../game/gameManager.js";
+
+
+// TODO -> flow should be event recieved here, triggers and event to go to roomManager.js api
+
 
 const filepath = import.meta.url;
 const logger = new Logger(filepath);
@@ -36,6 +41,10 @@ export const registerSocketHandlers = (io) => {
                 socketA.emit("matchmaking:anon:matched",room_id);
                 socketB.emit("matchmaking:anon:matched",room_id);
     })
+
+    // handle all future gameManagerEvents here
+    gameManagerEvents.on(`duel:anon`)
+
     io.on("connection",(socket) => {
         logger.info(`A new connection recieved from socket ${socket.id} `)
         

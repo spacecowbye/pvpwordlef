@@ -1,4 +1,4 @@
-export const WORD_LIST = [
+const ANSWER_WORD_LIST = [
   "GOOFY",
   "UNITE",
   "SCOPE",
@@ -1497,3 +1497,5 @@ export const WORD_LIST = [
   "CATTY",
   "SNIDE"
 ];
+
+export default ANSWER_WORD_LIST;

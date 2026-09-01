@@ -18,9 +18,15 @@ export class Game{
     // Room is an object here
     constructor(Room){
         logger.info(`Creating a new game Object from an existing Room object`);
+        //only two quick states? is the game being played or not, for now abandoned and everything go to Finished.
+        this.possbile_status ={ 
+            UNFINISHED : "UNFINISHED",
+            FINISHED : "FINISHED"
+        }
+        this.room_status = this.possbile_status.UNFINISHED ; 
         this.room_id = Room.room_id;
         this.players = Room.players;
-        this.WORLE_ANSWER = getRandomWordforWordle();
+        this.WORDLE_ANSWER = getRandomWordforWordle();
         logger.info(`[WORDLE] For room_id ${this.room_id} the answer words is ${this.WORLE_ANSWER}`);
         console.log(this);
     }

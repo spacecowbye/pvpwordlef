@@ -44,7 +44,7 @@ async function loadWords() {
 
 export const evaluateGuessAgainstAnswer = (cleaned_guess,WORDLE_ANSWER) => {
 
-    let colour_array = Array(5).fill('GRAY',0);
+    let color_array = Array(5).fill('GRAY',0);
 
     let characters_of_WORDLE_ANSWER = WORDLE_ANSWER.split('');
     let characters_of_cleaned_guesss = cleaned_guess.split('');
@@ -55,22 +55,31 @@ export const evaluateGuessAgainstAnswer = (cleaned_guess,WORDLE_ANSWER) => {
       const current_char_wordle = characters_of_WORDLE_ANSWER[i];
 
       if(current_char_guess === current_char_wordle){
-          colour_array[i] = "GREEN";
+          color_array[i] = "GREEN";
           characters_of_WORDLE_ANSWER[i] = null;
       } 
     }
     logger.info(`Attempting to find yellow characters for ${cleaned_guess} vs ${WORDLE_ANSWER}`);
     for(let i=0 ;i < 5; i++){
-      if(colour_array[i] === "GREEN"){
+      if(color_array[i] === "GREEN"){
         //already process 
         continue;
       }
       const idx = characters_of_WORDLE_ANSWER.findIndex((char) => char === characters_of_cleaned_guesss[i]);
       if(idx !== -1){
-        colour_array[i] = "YELLOW";
+        color_array[i] = "YELLOW";
       }
     }
-    return colour_array;
+    const guessResult = [];
+    for(let i = 0 ; i < 5; i++){
+      const obj = {
+        "letter" : characters_of_cleaned_guesss[i],
+        "color" : color_array[i]
+      }
+      guessResult.push(obj);
+    }
+    
+    return guessResult;
 }
 
 await loadWords();

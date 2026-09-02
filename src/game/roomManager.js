@@ -147,7 +147,7 @@ class RoomManager{
                 //verify player in room
                 if(room_id === mappedRoom){
                     this.addPlayerToRoom(verified_room_id,verifiedAnonymousUser);
-                    socket.join(room_id);
+                    socket.join(verified_room_id);
                     logger.info(`${user_id} has joined room ${verified_room_id} as a player`);
                     return  { msg : "READY_PLAYER_ONE"};
                 }

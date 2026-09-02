@@ -50,13 +50,12 @@ class GameManager{
                 player.attempts.push(cleaned_guess);
                 player.attemptCount = player.attempts.length;
                 logger.info(gameState);
-                const color_array =  evaluateGuessAgainstAnswer(cleaned_guess,WORDLE_ANSWER);
-                if(color_array){
-                    
-                    gameManagerEvents.emit(`duel:anon:guessEvaluation`);
-
-                }
-                
+                const guessResult =  evaluateGuessAgainstAnswer(cleaned_guess,WORDLE_ANSWER);
+                let guessResultMetadata = {};
+                guessResultMetadata["user_id"] = user_id;
+                guessResultMetadata["room_id"] = room_id;
+                guessResultMetadata["guess_result"] = guessResult;
+                gameManagerEvents.emit(`duel:anon:guess_result`,guessResultMetadata);
                 return ;
 
             }
@@ -74,7 +73,6 @@ class GameManager{
 
     }   
         
-
     //input is room object
     startGame(Room){
         logger.info(`Starting game for room_id ${Room.room_id}`);
@@ -91,7 +89,6 @@ class GameManager{
         }
         
         const cleaned_guess = attemptedGuess.trim().toLowerCase();
-
         //validate the guess
         const isValidGuess = isGuessValid(attemptedGuess);
 
@@ -106,7 +103,7 @@ class GameManager{
         logger.info(`Calling evauluate function in game Manager`);
         
         //modifys the game state object directly in memory
-        const evaluation = this.evaluate(room_id,user_id,cleaned_guess); 
+        this.evaluate(room_id,user_id,cleaned_guess); 
 
     }
 }

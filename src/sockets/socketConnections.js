@@ -43,7 +43,10 @@ export const registerSocketHandlers = (io) => {
     })
 
     // handle all future gameManagerEvents here
-    gameManagerEvents.on(`duel:anon`)
+    gameManagerEvents.on(`duel:anon:guess_result`,(payload) => {
+        logger.info(`Processing below payload before sending to both clients`);
+        
+    });
 
     io.on("connection",(socket) => {
         logger.info(`A new connection recieved from socket ${socket.id} `)

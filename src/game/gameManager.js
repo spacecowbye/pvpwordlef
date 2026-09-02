@@ -49,15 +49,16 @@ class GameManager{
                 logger.info(`Adding ${cleaned_guess} to ${user_id}'s attempt list`);
                 player.attempts.push(cleaned_guess);
                 player.attemptCount = player.attempts.length;
-                logger.info(gameState);
-                const guessResult =  evaluateGuessAgainstAnswer(cleaned_guess,WORDLE_ANSWER);
+                const guessResultList =  evaluateGuessAgainstAnswer(cleaned_guess,WORDLE_ANSWER);
+                
                 let guessResultMetadata = {};
                 guessResultMetadata["user_id"] = user_id;
                 guessResultMetadata["room_id"] = room_id;
-                guessResultMetadata["guess_result"] = guessResult;
+                //todo add data about user_id's current row to show the arrow on the right row.
+                guessResultMetadata["playerGuessResult"] = guessResultList[0];
+                guessResultMetadata["oppGuessResult"] = guessResultList[1];
                 gameManagerEvents.emit(`duel:anon:guess_result`,guessResultMetadata);
                 return ;
-
             }
             else{
                 logger.error(`Exceeded attempt count`);

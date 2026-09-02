@@ -20,7 +20,7 @@ socket.on("connect", () => {
     room_id,
     user_id,
   };
-  console.log(payload); 
+  console.log(`Connected to server with socket_id : ${socket.id}`);
   socket.emit("duel:anon:joinRoom", payload);
   
 });
@@ -57,6 +57,13 @@ socket.on("duel:anon:IMPROPER_CONDUCT_LAD", () => {
 socket.on("duel:anon:INVALID_ARGUEMENTS", () => {
   showError("Invalid room or player data");
 });
+
+//8. Happy path, server responds properly after you sending an attempt
+// paint your row and opp row
+socket.on("duel:anon:guess_result",(payload) => {
+  const stringifiedPayload = JSON.stringify(payload);
+  showToast(stringifiedPayload);
+})
 
 function onStartGame(){
     console.log(`Starting the game baby`);

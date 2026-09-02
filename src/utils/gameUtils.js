@@ -70,6 +70,7 @@ export const evaluateGuessAgainstAnswer = (cleaned_guess,WORDLE_ANSWER) => {
         color_array[i] = "YELLOW";
       }
     }
+    //payload for player 
     const guessResult = [];
     for(let i = 0 ; i < 5; i++){
       const obj = {
@@ -78,8 +79,17 @@ export const evaluateGuessAgainstAnswer = (cleaned_guess,WORDLE_ANSWER) => {
       }
       guessResult.push(obj);
     }
+
+    //payload for opponent
+    const oppGuessResult = [];
+    for(let i = 0 ; i < 5; i++){
+      const obj = {
+        "color" : color_array[i]
+      }
+      oppGuessResult.push(obj);
+    }
     
-    return guessResult;
+    return [guessResult,oppGuessResult];
 }
 
 await loadWords();

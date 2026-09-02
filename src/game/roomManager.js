@@ -16,7 +16,6 @@ class RoomManager{
         this.roomIdToRoomMapping = new Map();
     }
 
-    //verify service
     verifyRoom(client_room_id){
         // cant trust room_id here, provided by client
         return this.roomIdToRoomMapping.has(client_room_id) ? client_room_id : false
@@ -40,11 +39,7 @@ class RoomManager{
         this.roomIdToRoomMapping.set(room_id,room);
         this.userIdToRoomMapping.set(playerA.user_id,room_id);
         this.userIdToRoomMapping.set(playerB.user_id,room_id);
-        
-        logger.info(`RoomManager : userIdToRoomMapping`);
-        logger.info(Object.fromEntries(this.userIdToRoomMapping));
-        
-        
+
         return room;
     }
     
@@ -83,35 +78,33 @@ class RoomManager{
         let room = this.roomIdToRoomMapping.get(room_id);
         return room.size;
     }
-   addPlayerToRoom(room_id, anonymousUserObject) {
+    addPlayerToRoom(room_id, anonymousUserObject) {
     //room_id has been verified to true here
-    const room = this.roomIdToRoomMapping.get(room_id);
-    if (!room) {
-        logger.error(`Room ${room_id} not found`);
-    }
+        const room = this.roomIdToRoomMapping.get(room_id);
+        if (!room) {
+            logger.error(`Room ${room_id} not found`);
+        }
 
-    const current_user_id = anonymousUserObject.user_id;
-    logger.info(`Attempting to add ${current_user_id} to ${room_id}`);
+        const current_user_id = anonymousUserObject.user_id;
+        logger.info(`Attempting to add ${current_user_id} to ${room_id}`);
 
-    // Check if the player already exists in the room
-    const isDuplicate = room.players.some(player => player.user_id === current_user_id);
-    if (isDuplicate) {
-        logger.error(`Cannot join your own game ${current_user_id}`);
-        // #todo handle this later so that opening in new tab does not consider you as seperate player.
-        process.exit(1);
-    }
+        // Check if the player already exists in the room
+        const isDuplicate = room.players.some(player => player.user_id === current_user_id);
+        if (isDuplicate) {
+            logger.error(`Cannot join your own game ${current_user_id}`);
+            // #todo handle this later so that opening in new tab does not consider you as seperate player.
+            process.exit(1);
+        }
 
-    // Check if room is already full (max 2 players)
-    if (room.players.length >= 2) {
-        logger.warn(`Room ${room_id} is full`);
+        // Check if room is already full (max 2 players)
+        if (room.players.length >= 2) {
+            logger.warn(`Room ${room_id} is full`);
+        }
 
-    }
-
-    // Add the player safely
-    room.players.push(anonymousUserObject);
-    room.size = room.players.length;
-
-    console.log(room);
+        // Add the player safely
+        room.players.push(anonymousUserObject);
+        room.size = room.players.length;
+        return;
     }
 
 

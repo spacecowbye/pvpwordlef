@@ -44,8 +44,22 @@ export const registerSocketHandlers = (io) => {
 
     // handle all future gameManagerEvents here
     gameManagerEvents.on(`duel:anon:guess_result`,(payload) => {
-        logger.info(`Processing below payload before sending to both clients`);
+
+        //below user_id,room_id have been verified server-side    
+        const {user_id, room_id ,playerGuessResult,oppGuessResult } = payload;    
+        const room_obj = roomManager.roomIdToRoomMapping.get(room_id);
+        const opp_user_object_list = room_obj.players.filter((el) => el.user_id !== user_id);
+        const opp_user_object = opp_user_object_list[0];
+        const opp_user_id = opp_user_object.user_id ; 
+        logger.info(`${opp_user_id} is the opponent for ${user_id} in room ${room_id}`);
         
+        const socketPlayer = userService.userIdToSocketMap.get(user_id);
+        const socketOpponent = userService.userIdToSocketMap.get(opp_user_id);
+        
+        //gives back a list with two elements
+         
+        socketPlayer.emit(`duel:anon:guess_result`,playerGuessResult);
+        socketOpponent.emit(`duel:anon:guess_result`,oppGuessResult);
     });
 
     io.on("connection",(socket) => {

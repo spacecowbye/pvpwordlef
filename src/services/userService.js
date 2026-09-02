@@ -28,7 +28,6 @@ class UserService {
     }
     generateUserIdForSocketId(socket){
         const user_id = crypto.randomUUID();
-        logger.info(`User ${user_id} has been mapped to his Socket ID ${socket.id}`);
         return user_id
     }
     createAnonymousPlayer(socket){

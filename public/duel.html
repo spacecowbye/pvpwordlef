@@ -292,10 +292,19 @@
 
 const ANSWER="sharp";
 
-let currentRow   = 0;
+let currentRow  = 0;
+let opponentCurrentRow = 0;
+let waitingForServer = false;
+let opponentRevealRowDuration = 2000; // milliseconds
 let currentGuess = '';
 let gameOver     = false;
 let gameStarted  = true; // Enabled directly for the standalone view state
+
+const COLOR_MAPPING = {
+  "GREEN" : "correct",
+  "YELLOW" : "present",
+  "GRAY" : "absent"
+}
 
 const keyState = new Map();
 
@@ -316,13 +325,13 @@ function paintCurrentRow() {
 }
 
 function addLetter(letter) {
-  if (currentGuess.length >= 5) return;
+  if (currentGuess.length >= 5 || waitingForServer) return;
   currentGuess += letter.toLowerCase();
   paintCurrentRow();
 }
 
 function deleteLetter() {
-  if (!currentGuess.length) return;
+  if (!currentGuess.length || waitingForServer) return;
   currentGuess = currentGuess.slice(0, -1);
   paintCurrentRow();
 }
@@ -331,6 +340,7 @@ function shakeCurrentRow() {
   for (let c = 0; c < 5; c++) {
     const tile = getTile(currentRow, c);
     tile.classList.remove('shake');
+    //todo understand this trick here
     void tile.offsetWidth;
     tile.classList.add('shake');
     tile.addEventListener('animationend', () => tile.classList.remove('shake'), { once: true });
@@ -391,38 +401,44 @@ function updateKeyboard(guess, evaluation) {
   });
 }
 
-async function submitGuess() {
-  if (gameOver) return;
+function submitGuess() {
+  if (gameOver || waitingForServer) return;
   if (currentGuess.length !== 5) { setStatus('Not enough letters.'); shakeCurrentRow(); return; }
-  console.log(ALLOWED_WORDS_SET);
-  console.log(currentGuess);
-  submitGuessToServer(currentGuess);
-  console.log(ALLOWED_WORDS_SET.has(currentGuess));
   if (!ALLOWED_WORDS_SET.has(currentGuess)) { setStatus('Not in word list'); shakeCurrentRow(); return }
-  const evaluation = evaluate(currentGuess, ANSWER);
-  const guess = currentGuess;
-  currentGuess = '';
-  gameOver = true;
-
-  await revealRow(currentRow, guess, evaluation);
-  updateKeyboard(guess, evaluation);
-
-  if (evaluation.every(e => e === 'correct')) {
-    setStatus(['Brilliant!','Magnificent!','Impressive!','Splendid!','Great!','Phew!'][currentRow]);
-    setFooter(`The word was ${ANSWER.toUpperCase()}.`);
-    return;
-  }
-
-  currentRow++;
-  if (currentRow >= 6) {
-    setStatus(`Game over. The word was ${ANSWER.toUpperCase()}.`);
-    setFooter('Better luck next time.');
-    return;
-  }
-
-  gameOver = false;
-  setStatus(`Attempt ${currentRow + 1} of 6`);
+  
+  
+  submitGuessToServer(currentGuess);
+  
 }
+async function onGuessResult(evaluationArray){
+
+  const playerEvaluation = evaluationArray[0];
+  const opponentEvaluation = evaluationArray[1];
+  let guess = currentGuess;
+  currentGuess = "";
+  await revealRow(currentRow,guess,playerEvaluation);
+  updateKeyboard(guess,playerEvaluation);
+  currentRow +=1;
+
+}
+  // todo handle below part
+  //  const evaluation = evaluate(currentGuess, ANSWER);
+  // if (evaluation.every(e => e === 'correct')) {
+  //   setStatus(['Brilliant!','Magnificent!','Impressive!','Splendid!','Great!','Phew!'][currentRow]);
+  //   setFooter(`The word was ${ANSWER.toUpperCase()}.`);
+  //   return;
+  // }
+
+  // currentRow++;
+  // if (currentRow >= 6) {
+  //   setStatus(`Game over. The word was ${ANSWER.toUpperCase()}.`);
+  //   setFooter('Better luck next time.');
+  //   return;
+  // }
+
+  // gameOver = false;
+  // setStatus(`Attempt ${currentRow + 1} of 6`);
+
 
 function handleKey(key) {
   if (gameOver || !gameStarted) return;

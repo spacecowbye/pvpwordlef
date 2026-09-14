@@ -61,8 +61,8 @@ socket.on("duel:anon:INVALID_ARGUEMENTS", () => {
 //8. Happy path, server responds properly after you sending an attempt
 // paint your row and opp row
 socket.on("duel:anon:guess_result",(payload) => {
-  const stringifiedPayload = JSON.stringify(payload);
-  showToast(stringifiedPayload);
+  const guessResultEvent = new CustomEvent('duel:anon:guess_result',{ detail: payload });
+  window.dispatchEvent(guessResultEvent);  
 })
 
 function onStartGame(){

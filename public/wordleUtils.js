@@ -4,16 +4,8 @@ let ALLOWED_WORDS_SET = new Set();
 
 
 function isValidWordleWord(word){
-    console.log(ALLOWED_WORDS_SET);
     const word_to_check = word.toLowerCase();
-    if(ALLOWED_WORDS_SET.has(word_to_check)){
-        console.log(`${word_to_check} is in wordle list`);
-        return true;
-    }
-    else{
-        console.log(`${word} is not in wordle list`);
-        return false;
-    }
+    return ALLOWED_WORDS_SET.has(word_to_check)
 }
 
 

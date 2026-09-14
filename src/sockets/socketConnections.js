@@ -55,11 +55,9 @@ export const registerSocketHandlers = (io) => {
         
         const socketPlayer = userService.userIdToSocketMap.get(user_id);
         const socketOpponent = userService.userIdToSocketMap.get(opp_user_id);
-        
-        //gives back a list with two elements
          
         socketPlayer.emit(`duel:anon:guess_result`,playerGuessResult);
-        socketOpponent.emit(`duel:anon:guess_result`,oppGuessResult);
+        socketOpponent.emit(`duel:anon:opp_guess_result`,oppGuessResult);
     });
 
     io.on("connection",(socket) => {
@@ -142,7 +140,5 @@ export const registerSocketHandlers = (io) => {
             // if a queued socket is disconnected then remove it from the matchmaking queuue, remove it from socket mapping
             logger.info(`Socket ${socket.id} has disconnected. Reason: ${reason}`);
         })
-
-       
     })
 }

@@ -147,7 +147,6 @@ class RoomManager{
                 else{
                     return { msg : "USER_NOT_EXPECTED" };
                 }
-                break;
             case 1:
                 logger.info(`${user_id} is the second person to join the room ${verified_room_id}`);
                 if(verified_room_id === mappedRoom){
@@ -161,11 +160,9 @@ class RoomManager{
                 else{
                     return  { msg : "USER_NOT_EXPECTED" } ;
                 }
-                break;
             case 2:
                 logger.warn(`Somebody tried to join an already full room ${room_id}`);
                 return { msg : "ROOM_IS_FULL" } ;
-                break;   
             default:
                 logger.warn(`something broker here`);
                 break;

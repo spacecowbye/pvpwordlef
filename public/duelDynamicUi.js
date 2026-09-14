@@ -1,5 +1,42 @@
 let stylesInjected = false;
 
+function updateKeyboard(guess, evaluation) {
+  const priority = { absent: 1, present: 2, correct: 3 };
+  for (let i = 0; i < 5; i++) {
+    const letter = guess[i].toUpperCase();
+    const tone   = evaluation[i];
+    const prev   = keyState.get(letter);
+    if (!prev || priority[tone] > priority[prev]) keyState.set(letter, tone);
+  }
+  keyState.forEach((tone, letter) => {
+    const btn = document.querySelector(`[data-key="${letter}"]`);
+    if (!btn) return;
+    btn.classList.remove('correct', 'present', 'absent');
+    btn.classList.add(tone);
+  });
+}
+
+async function revealRow(row, guess, evaluation) {
+  return new Promise(resolve => {
+    let done = 0;
+    for (let c = 0; c < 5; c++) {
+      const tile = getTile(row, c);
+      const back = tile.querySelector('.tile-back');
+      const tone = evaluation[c];
+      setTimeout(() => {
+        tile.classList.add('flipping');
+        back.textContent = guess[c].toUpperCase();
+        setTimeout(() => {
+          tile.classList.remove('flipping');
+          tile.classList.add('revealed', tone);
+          done++;
+          if (done === 5) resolve();
+        }, 220);
+      }, c * 100);
+    }
+  });
+}
+
 function injectStyles() {
     if (stylesInjected) return;
     stylesInjected = true;

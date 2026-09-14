@@ -42,7 +42,6 @@ class GameManager{
                 throw new Error("No Such Player in Room");
             }
             // can player actually make a guess as per attempts or is game finished?
-            console.log(player);
             console.log(`Player attempt count is : ${player.attemptCount}`);
             const attemptCount = Number(player.attemptCount);
             if( attemptCount < 6 ){

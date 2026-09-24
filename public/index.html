@@ -163,7 +163,7 @@
     localStorage.removeItem("user_id");
     localStorage.removeItem("room_id");
 
-    const socket = io();
+    let socket = io();
     socket.on('connect', () => {
       console.log('Connected:', socket.id);
     });

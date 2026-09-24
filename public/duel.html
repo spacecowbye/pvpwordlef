@@ -9,14 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Clear+Sans:wght=400;700&family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:     #000;
-      --panel:  #0b0b0b;
-      --border: #1d1d1d;
-      --text:   #f4f0ea;
-      --muted:  #8b8781;
-      --green:  #538d4e;
-      --yellow: #b59f3b;
-      --gray:   #3a3a3c;
+      --bg:             #000;
+      --panel:          #0b0b0b;
+      --border:         #1d1d1d;
+      --text:           #f4f0ea;
+      --muted:          #8b8781;
+      --green:          #538d4e;
+      --yellow:         #b59f3b;
+      --gray:           #3a3a3c;
+      --player-color:   #538d4e; /* Green for Player */
+      --opponent-color: #e63946; /* Red for Opponent */
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -94,6 +96,42 @@
       margin: 0;
     }
 
+    /* Container holding board & dynamic player/opponent arrows */
+    .board-container {
+      position: relative;
+    }
+
+    /* Base style for dynamic indicator arrows */
+    .row-arrow {
+      position: absolute;
+      top: 0;
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      /* Smooth cubic-bezier transition */
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      will-change: transform;
+      z-index: 10;
+    }
+
+    /* Green Player Arrow (Left Side - Points Right ►) */
+    .player-arrow {
+      left: -24px;
+      border-left: 11px solid var(--player-color);
+    }
+
+    /* Red Opponent Arrow (Right Side - Points Left ◄) */
+    .opponent-arrow {
+      right: -24px;
+      border-right: 11px solid var(--opponent-color);
+    }
+
+    .row-arrow.hidden {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
     #game-board {
       display: grid;
       grid-template-rows: repeat(6, 1fr);
@@ -157,7 +195,7 @@
     .key:active { filter: brightness(0.85); }
     .key.correct { background: var(--green);  border-color: var(--green);  color: #fff; }
     .key.present { background: var(--yellow); border-color: var(--yellow); color: #fff; }
-    .key.absent  { background: #4a4a4d;       border-color: #4a4a4d;       color: #fff; }
+    .key.absent  .tile-back { background: #4a4a4d;       border-color: #4a4a4d;       color: #fff; }
 
     .footer {
       margin-top: 8px;
@@ -176,6 +214,9 @@
       .shell { padding: 12px; }
       .topbar { padding: 12px 14px; border-radius: 14px; }
       #game-board { width: 270px; }
+      .row-arrow { border-top-width: 6px; border-bottom-width: 6px; }
+      .player-arrow { left: -20px; border-left-width: 8px; }
+      .opponent-arrow { right: -20px; border-right-width: 8px; }
       .board-row { grid-template-columns: repeat(5, 50px); }
       .tile { width: 50px; height: 50px; }
       .tile-face, .tile-back { font-size: 1.65rem; }
@@ -197,48 +238,54 @@
       <p id="status" role="status" aria-live="polite">Guess the word.</p>
 
       <section aria-label="Wordle board">
-        <div id="game-board" role="grid" aria-readonly="true">
-          <div class="board-row" role="row" id="row-1">
-            <div class="tile" role="gridcell" id="tile-1-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-1-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-          </div>
-          <div class="board-row" role="row" id="row-2">
-            <div class="tile" role="gridcell" id="tile-2-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-2-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-          </div>
-          <div class="board-row" role="row" id="row-3">
-            <div class="tile" role="gridcell" id="tile-3-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-3-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-          </div>
-          <div class="board-row" role="row" id="row-4">
-            <div class="tile" role="gridcell" id="tile-4-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-4-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-          </div>
-          <div class="board-row" role="row" id="row-5">
-            <div class="tile" role="gridcell" id="tile-5-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-5-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-          </div>
-          <div class="board-row" role="row" id="row-6">
-            <div class="tile" role="gridcell" id="tile-6-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
-            <div class="tile" role="gridcell" id="tile-6-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+        <div class="board-container">
+          <!-- Dynamic Arrow Indicators -->
+          <div id="player-arrow" class="row-arrow player-arrow" aria-hidden="true" title="Your row"></div>
+          <div id="opponent-arrow" class="row-arrow opponent-arrow" aria-hidden="true" title="Opponent row"></div>
+
+          <div id="game-board" role="grid" aria-readonly="true">
+            <div class="board-row" role="row" id="row-1">
+              <div class="tile" role="gridcell" id="tile-1-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-1-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-1-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-1-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-1-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            </div>
+            <div class="board-row" role="row" id="row-2">
+              <div class="tile" role="gridcell" id="tile-2-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-2-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-2-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-2-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-2-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            </div>
+            <div class="board-row" role="row" id="row-3">
+              <div class="tile" role="gridcell" id="tile-3-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-3-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-3-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-3-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-3-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            </div>
+            <div class="board-row" role="row" id="row-4">
+              <div class="tile" role="gridcell" id="tile-4-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-4-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-4-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-4-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-4-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            </div>
+            <div class="board-row" role="row" id="row-5">
+              <div class="tile" role="gridcell" id="tile-5-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-5-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-5-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-5-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-5-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            </div>
+            <div class="board-row" role="row" id="row-6">
+              <div class="tile" role="gridcell" id="tile-6-1"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-6-2"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-6-3"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-6-4"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+              <div class="tile" role="gridcell" id="tile-6-5"><div class="tile-inner"><div class="tile-face"></div><div class="tile-back"></div></div></div>
+            </div>
           </div>
         </div>
       </section>
@@ -290,16 +337,15 @@
 <script src="/wordleUtils.js"></script>
 <script>
 
-
 let currentRow  = 0;
 let opponentCurrentRow = 0;
 let waitingForServer = false;
-let opponentRevealRowDuration = 2000; // milliseconds
+let opponentRevealRowDuration = 2000; 
 let currentGuess = '';
 let gameOver     = false;
-let gameStarted  = true; // Enabled directly for the standalone view state
+let gameStarted  = true; 
 
-const keyState = new Map();
+let keyState = new Map();
 
 function getTile(row, col) {
   return document.getElementById(`tile-${row + 1}-${col + 1}`);
@@ -307,11 +353,51 @@ function getTile(row, col) {
 function setStatus(msg) { document.getElementById('status').textContent = msg; }
 function setFooter(msg) { document.getElementById('footer').textContent = msg; }
 
+// Base arrow positioning function
+function updateArrow(arrowId, rowIndex) {
+  let arrow = document.getElementById(arrowId);
+  if (gameOver || rowIndex >= 6) {
+    arrow.classList.add('hidden');
+    return;
+  }
+
+  let targetRow = document.getElementById(`row-${rowIndex + 1}`);
+  if (!targetRow) return;
+
+  let rowHeight = targetRow.offsetHeight;
+  let targetTop = targetRow.offsetTop + (rowHeight / 2) - 8;
+
+  arrow.style.transform = `translateY(${targetTop}px)`;
+  arrow.classList.remove('hidden');
+}
+
+// Independent update functions
+function updatePlayerArrow() {
+  updateArrow('player-arrow', currentRow);
+}
+
+function updateOpponentArrow(newRow) {
+  if (typeof newRow === 'number') {
+    opponentCurrentRow = newRow;
+  }
+  updateArrow('opponent-arrow', opponentCurrentRow);
+}
+
+// Full alignment function reserved strictly for window events
+function syncAllArrows() {
+  updatePlayerArrow();
+  updateOpponentArrow();
+}
+
+// Initial position triggers
+window.addEventListener('load', syncAllArrows);
+window.addEventListener('resize', syncAllArrows);
+
 function paintCurrentRow() {
   for (let c = 0; c < 5; c++) {
-    const tile = getTile(currentRow, c);
-    const face = tile.querySelector('.tile-face');
-    const letter = currentGuess[c] || '';
+    let tile = getTile(currentRow, c);
+    let face = tile.querySelector('.tile-face');
+    let letter = currentGuess[c] || '';
     face.textContent = letter.toUpperCase();
     tile.classList.toggle('has-letter', !!letter);
   }
@@ -331,9 +417,8 @@ function deleteLetter() {
 
 function shakeCurrentRow() {
   for (let c = 0; c < 5; c++) {
-    const tile = getTile(currentRow, c);
+    let tile = getTile(currentRow, c);
     tile.classList.remove('shake');
-    //todo understand this trick here
     void tile.offsetWidth;
     tile.classList.add('shake');
     tile.addEventListener('animationend', () => tile.classList.remove('shake'), { once: true });
@@ -363,8 +448,8 @@ async function onGuessResult(arrayOfLettersAndStatus){
   updateKeyboard(guess,evaluation);
   if (evaluation.every(e => e === 'correct')) {
     setStatus(['Brilliant!','Magnificent!','Impressive!','Splendid!','Great!','Phew!'][currentRow]);
-    //setFooter(`The word was ${ANSWER.toUpperCase()}.`);
-    // todo handle this from server side, if the last attempt doesnt reveal the word 
+    gameOver = true;
+    syncAllArrows();
     return;
   }
   currentRow++;
@@ -372,31 +457,35 @@ async function onGuessResult(arrayOfLettersAndStatus){
   if (currentRow >= 6) {
     setStatus(`Game over. The word was ${ANSWER.toUpperCase()}.`);
     setFooter('Better luck next time.');
+    gameOver = true;
+    syncAllArrows();
     return;
   }
+
+  // Update ONLY the player's arrow position
+  updatePlayerArrow();
   setStatus(`Attempt ${currentRow + 1} of 6`); 
   
   waitingForServer=false;
-
 }
 
 function handleKey(key) {
   if (gameOver || !gameStarted) return;
-  const k = key.toUpperCase();
+  let k = key.toUpperCase();
   if (k === 'ENTER')     { submitGuess(); return; }
   if (k === 'BACKSPACE') { deleteLetter(); return; }
   if (/^[A-Z]$/.test(k)) addLetter(k);
 }
 
 document.getElementById('keyboard').addEventListener('click', e => {
-  const key = e.target.closest('[data-key]')?.dataset.key;
+  let key = e.target.closest('[data-key]')?.dataset.key;
   if (key) handleKey(key);
 });
 
 document.addEventListener('keydown', e => {
   if (!gameStarted) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  const key = e.key === 'Backspace' ? 'BACKSPACE'
+  let key = e.key === 'Backspace' ? 'BACKSPACE'
             : e.key === 'Enter'     ? 'ENTER'
             : e.key.length === 1    ? e.key.toUpperCase()
             : null;
@@ -407,11 +496,41 @@ document.addEventListener('keydown', e => {
   }
 });
 
-
 window.addEventListener(`duel:anon:guess_result`,( payload ) => {
-  const guessResultData = payload.detail;
+  let guessResultData = payload.detail;
   onGuessResult(guessResultData);
+});
+
+window.addEventListener(`duel:anon:opp_guess_result`,(payload) => {
+  console.log("Opponent has guessed something");
+//object will look like this
+//   {
+//     "opponentCurrentRow": 1,
+//     "opponentGuess": [
+//         {
+//             "status": "absent"
+//         },
+//         {
+//             "status": "absent"
+//         },
+//         {
+//             "status": "absent"
+//         },
+//         {
+//             "status": "present"
+//         },
+//         {
+//             "status": "absent"
+//         }
+//     ]
+// }
+  let opponentGuessObject = payload.detail;
+  let { opponentCurrentRow , opponentGuess} = opponentGuessObject ; 
+  opponentCurrentRow = Number(opponentCurrentRow);
+  updateOpponentArrow(opponentCurrentRow);
+
 })
+
 </script>
 
 </body>

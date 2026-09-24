@@ -1,14 +1,14 @@
 // linked to duel.html
 // if url is not equal to room_id in payload then raise error?
 
-const url = window.location.href;
-const chunks = url.split('/');
-const room_id = chunks.at(-1);
+let url = window.location.href;
+let chunks = url.split('/');
+let room_id = chunks.at(-1);
 
 
-const user_id = localStorage.getItem("user_id");
+let user_id = localStorage.getItem("user_id");
 
-const socket = io({
+let socket = io({
   auth : {
     "user_id" : user_id
   }
@@ -16,7 +16,7 @@ const socket = io({
 
 socket.on("connect", () => {
   console.log(`Connected to server on /duel page`);
-  const payload = {
+  let payload = {
     room_id,
     user_id,
   };
@@ -61,9 +61,13 @@ socket.on("duel:anon:INVALID_ARGUEMENTS", () => {
 //8. Happy path, server responds properly after you sending an attempt
 // paint your row and opp row
 socket.on("duel:anon:guess_result",(payload) => {
-  const guessResultEvent = new CustomEvent('duel:anon:guess_result',{ detail: payload });
+  let guessResultEvent = new CustomEvent('duel:anon:guess_result',{ detail: payload });
   window.dispatchEvent(guessResultEvent);  
 })
+socket.on(`duel:anon:opp_guess_result`,( payload )=> {
+  let opponentGuessEvent = new CustomEvent(`duel:anon:opp_guess_result`, { detail : payload })
+  window.dispatchEvent(opponentGuessEvent);
+});
 
 function onStartGame(){
     console.log(`Starting the game baby`);

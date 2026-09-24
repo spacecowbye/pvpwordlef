@@ -1,15 +1,15 @@
 let stylesInjected = false;
 
 function updateKeyboard(guess, evaluation) {
-  const priority = { absent: 1, present: 2, correct: 3 };
+  let priority = { absent: 1, present: 2, correct: 3 };
   for (let i = 0; i < 5; i++) {
-    const letter = guess[i].toUpperCase();
-    const tone   = evaluation[i];
-    const prev   = keyState.get(letter);
+    let letter = guess[i].toUpperCase();
+    let tone   = evaluation[i];
+    let prev   = keyState.get(letter);
     if (!prev || priority[tone] > priority[prev]) keyState.set(letter, tone);
   }
   keyState.forEach((tone, letter) => {
-    const btn = document.querySelector(`[data-key="${letter}"]`);
+    let btn = document.querySelector(`[data-key="${letter}"]`);
     if (!btn) return;
     btn.classList.remove('correct', 'present', 'absent');
     btn.classList.add(tone);
@@ -20,9 +20,9 @@ async function revealRow(row, guess, evaluation) {
   return new Promise(resolve => {
     let done = 0;
     for (let c = 0; c < 5; c++) {
-      const tile = getTile(row, c);
-      const back = tile.querySelector('.tile-back');
-      const tone = evaluation[c];
+      let tile = getTile(row, c);
+      let back = tile.querySelector('.tile-back');
+      let tone = evaluation[c];
       setTimeout(() => {
         tile.classList.add('flipping');
         back.textContent = guess[c].toUpperCase();
@@ -41,7 +41,7 @@ function injectStyles() {
     if (stylesInjected) return;
     stylesInjected = true;
 
-    const style = document.createElement("style");
+    let style = document.createElement("style");
 
     style.textContent = `
     /* ---------- Toast ---------- */
@@ -151,7 +151,7 @@ function toastContainer() {
 function showToast(message, duration = 2000) {
     injectStyles();
 
-    const toast = document.createElement("div");
+    let toast = document.createElement("div");
     toast.className = `pvp-toast`;
     toast.textContent = message;
 
@@ -169,7 +169,7 @@ function showNotification(message) {
     injectStyles();
 
     return new Promise(resolve => {
-        const overlay = document.createElement("div");
+        let overlay = document.createElement("div");
         overlay.className = "pvp-overlay";
 
         overlay.innerHTML = `
@@ -181,7 +181,7 @@ function showNotification(message) {
 
         document.body.appendChild(overlay);
 
-        const closeNotification = () => {
+        let closeNotification = () => {
             overlay.remove();
             window.removeEventListener("keydown", keyHandler);
             resolve();
@@ -193,7 +193,7 @@ function showNotification(message) {
             if (e.target === overlay) closeNotification();
         };
 
-        const keyHandler = e => {
+        let keyHandler = e => {
             if (e.key === "Escape" || e.key === "Enter") {
                 closeNotification();
             }
@@ -203,7 +203,7 @@ function showNotification(message) {
 }
 
 function showError(message) {    
-    const finalMessage = message 
+    let finalMessage = message 
     return showNotification(finalMessage).then(() => {
         window.location.href = "/"; // Redirects to the homepage
     });

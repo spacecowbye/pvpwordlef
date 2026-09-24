@@ -55,7 +55,10 @@ class GameManager{
                 guessResultMetadata["room_id"] = room_id;
                 //todo add data about user_id's current row to show the arrow on the right row.
                 guessResultMetadata["playerGuessResult"] = guessResultList[0];
-                guessResultMetadata["oppGuessResult"] = guessResultList[1];
+                guessResultMetadata["opponentGuessObject"] = {
+                    opponentCurrentRow : player.attemptCount,
+                    opponentGuess : guessResultList[1]
+                }
                 gameManagerEvents.emit(`duel:anon:guess_result`,guessResultMetadata);
                 return ;
             }
